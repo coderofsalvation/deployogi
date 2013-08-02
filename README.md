@@ -23,13 +23,24 @@ Simply by pushing to a remote git-repository.
 Only thing to do once is writing a config-file and optionally some triggerfiles ('on.backup' / 'on.update' e.g.).
 Thats it!
 
-Example workflow
-================
-Lets assume you have at least one application maintainer (who merges gitbranches into staging- and master-branch) and developers
-who create feature-branches. 
-
 Requirements
 ============
 
 * LAMP server
 * a webapplication which supports cli-invokation (to configure frameworkrelated variables from the commandline)
+* you have to know about of commandline (bash) stuff 
+
+Installation
+============
+For now lets assume you wanna get started asap, then copy/paste this oneliner into your terminal :
+
+    wget "https://raw.github.com/coderofsalvation/deployogi/master/deployogi" -O deployogi; chmod 755 deployogi; 
+
+Then run:
+
+    ./deployogi
+
+Example workflow
+================
+Lets assume you have at least one application maintainer (who merges gitbranches into staging- and master-branch) and developers
+who create feature-branches. 

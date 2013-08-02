@@ -215,7 +215,7 @@ init(){
   dir="$1"
   [[ ! -d "$dir" ]] && echo "[!] directory '$dir' does not exist, please think things over" && exit 1
   cd "$dir"; mkdir deployogi.d && echo "[x] creating '$dir/deployogi.d' dir"
-  cp "$0" . && echo "[x] copying 'deployogi'-bashscript to '$dir/.'"
+  [[ ! -f "$dir/deployogi" ]] && cp "$0" . && echo "[x] copying 'deployogi'-bashscript to '$dir/.'"
   echo "$TPL_CONFIG" > "$dir/deployogi.d/config" && echo "[x] creating '$dir/deployogi.d/config'" || echo "[!] permission prob!"
   for trigger in "${TRIGGERS[@]}"; do echo "[x] creating '$dir/deployogi.d/$trigger'" && printf "$TPL_TRIGGER" > "$dir/deployogi.d/$trigger"; done
   [[ ! $? == 0 ]] && echo "[!] wow..permissionproblems..please think things over" && exit 1

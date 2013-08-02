@@ -1,0 +1,275 @@
+#!/bin/bash 
+#
+# %license%
+
+# handy variables
+C_RESET="\E[0m"                         
+C_YELLOW="\E[1;33;40m"
+C_RED="\E[1;31;40m"                     
+C_GREEN="\E[1;32;40m"                   
+C_WHITE="\E[1;37m"
+VERSION="0.1"
+VERSIONFANCY="$C_WHITE v$VERSION$C_GREEN @ https://github.com/coderofsalvation/deployogi$C_RESET"
+REALPATH="$( dirname "$(readlink -f "$0")" )"
+TRIGGERDIR=""
+DEPLOY_LOG="deploystart"
+TRIGGERS=(10-on.begin 20-on.backup 30-on.begin 40-on.merge 50-on.configure 60-on.generatedocs 70-on.test 80-on.exit )
+REQUIREMENTS=(git)
+CURRENTDIR=""
+USE_SQL=1
+USE_CLONE=1
+IS_CLONE=0
+
+# template files (folded in vim for convenience)#{{{#{{{
+TPL_TRIGGER="#!/bin/bash\n\n# nothing happening here..yet\n\n[[ \$IS_CLONE ]] && echo 'script applied on clone!'\n\n# return > 0 if something went wrong and deployment should stop\nreturn 0"#}}}
+TPL_CONFIG='#!/bin/bash
+
+# mandatory
+NAME="YourWebApplication"                                 # just a name to create unique temporary files and such
+GITDIR="/tmp/test.git"                                    # this is a sharedrepo where we can get our latest sourcecode 
+                                                          # NOTE: devs should push to this sharedrepo (see: git init --bare) instead of to a local repo.
+GITBRANCH="master"                                        # which branch to deploy? ("master" for productionserver, "staging" for stagingserver)
+#PROJECTDIR="/var/www/webapps/yourwebbapp"                 # where to deploy? (the location where your webapplication can be visited)
+PROJECTDIR="/tmp/testapp"                                 # where to deploy? (the location where your webapplication can be visited)
+BACKUPFILE="/tmp/$NAME-backup-$(date +"%Y%m%d%H%M").zip"  # where to place backups (things are backedup before actual deployment)
+DEPLOYLOGFILE="/tmp/deployogi-$NAME.log"                  # logfile for later inspection of deployment
+WEBDOMAIN="your.domain.com"                               # domain where the webapplication can be accesed
+
+# clone settings
+
+# let deployogi try to deploy to a clone before merging/upgrading the real version, (note: your webapp should support running from outside the webroot)
+#PROJECTDIR_CLONE="/var/www/webapps/yourwebbapp/clone"     # where to deploy? (the location where your webapplication can be visited)
+PROJECTDIR_CLONE="/tmp/testapp/new"                       # where to deploy the clone? (first a clone is deployed to see if the tests work at all)
+CLONE_ROOTURL="/new"                                       # where can the clone be accessed thru the web?
+
+# SQL settings
+
+#PROJECTSQL="db.sql"                                       # in which file should we dump the current databasedata?
+#SQL_LOGIN="yourlogin"                                     # db login 
+#SQL_PW="somepw"                                           # db password
+#SQL_DB="yourwebapp_live"                                  # db name 
+#SQL_DB_TEST="yourwebapp_live_test"                        # databasename which we can use/create for the clone
+#SQL_DIFF_IGNORETABLES="logs|sessions|timestamps"          # which tables should be ignored in diffing the databases? (nice to what changed in the db right?)
+'
+#}}}
+  
+# parse config of project if any
+[[ -f "deployogi.d/config" ]] && source "deployogi.d/config";
+
+# catch exit 
+trap "_onexit" EXIT SIGINT SIGTERM ERR 0 1
+ 
+_onexit(){
+  if [[ ${#TRIGGERDIR} > 0  ]]; then 
+    trigger="$TRIGGERDIR/deployi.d/80-on.exit"
+    [[ -f "$trigger" ]] && source "$trigger"           # fire 'deployogi.d/on.exit' if any
+  fi 
+}
+
+_checkrequirements(){
+  for req in "${REQUIREMENTS[@]}"; do
+    hash "$req" 2>&-
+    if [ $? == 1 ]; then echo "please install '$req'"; exit 1; fi
+  done;
+}
+
+#                       <-- starts deployment of webapplication (usually called by git hook)
+deploy(){
+  :>"$DEPLOYLOGFILE" && chmod 777 "$DEPLOYLOGFILE" # empty and initialize logfile
+  ( 
+    [[ ! -d "deployogi.d" ]] && echo "deployogi.d directory not found in $dir, please use init or think things over" && exit 1
+    _header "deployogi"; printf "$VERSIONFANCY\n\n"
+    _checkconfig 
+    _deploytrigger "beginning deployment" "10-on.begin" || _haltdeploy
+    _deploytrigger "creating backup of current webapp" "20-on.backup" || _haltdeploy
+    _backup || _haltdeploy
+    if [[ $USE_CLONE ]]; then
+      _header "clone deployment"
+      IS_CLONE=1
+      if [[ $USE_SQL ]]; then _clonedb "$SQL_DB_TEST"; fi # create a testdatabase (and insert the current backup into it)
+      _clonewebapp || _haltdeploy
+      echo "[x] entering $PROJECTDIR_CLONE"
+      CURRENTDIR="$PROJECTDIR_CLONE"
+      _deployapp || _haltdeploy # halt if clone deployment went wrong
+      if [[ $USE_SQL ]]; then _dbdiff "$PROJECTDIR_CLONE"; fi 
+      unset IS_CLONE
+    fi 
+    printf "\n\n$C_YELLOW[!] about to do the real deployment in 10 secs..press ctrl-c to abort$C_RESET\n"
+    for ((i=0; i < 10; i++ )); do printf "."; sleep 1s; done;
+    _header "real deployment"
+    CURRENTDIR="$PROJECTDIR"
+    _deployapp || _haltdeploy # halt if deployment went wrong 
+    if [[ $USE_SQL ]]; then _dbdiff "$PROJECTDIR"; fi 
+  ) | while read line; do printf "$line\n"; printf "$line\n" >> "$DEPLOYLOGFILE"; done # tee doesnt support colors and create bufferproblems
+  sed -i -r "s:\x1B\[[0-9;]*[mK]::g" "$DEPLOYLOGFILE" # remove colors
+}
+
+_deployhalt(){
+  echo "$C_RED[x] something went wrong..halting deployment $C_RESET"
+}
+
+_deployapp(){
+  _deploytrigger "merging latest '$GITBRANCH' on clone" "30-on.merge"
+  _merge
+  _deploytrigger "configuring clone" "40-on.configure"
+}
+
+_dbdiff(){
+  projectdir="$1"
+  header "database diff"
+  mysqldump --extended-insert=FALSE -u $SQL_LOGIN -p$SQL_PW $SQL_DB > $projectdir/$PROJECTSQL.afterdeploy
+  diff -Naur $projectdir/$PROJECTSQL $PROJECTDIR/$PROJECTSQL.afterdeploy | grep -v "AUTO_INCREMENT=" | grep -v -E "($SQL_DIFF_IGNORETABLES)"
+}
+
+_deploytrigger(){
+  desc="$1"
+  triggerfile="$2"
+  function="$3"
+  [[ -n "$3" ]] && eval $function
+  printf "$C_GREEN[x] %-40s $C_RESET @ $TRIGGERDIR/deployogi.d/$triggerfile\n" "$desc"
+  trigger="$TRIGGERDIR/deployi.d/{$trigger}"; 
+  if [[ -f "$trigger" ]]; then 
+    cd $CURRENTDIR;
+    source "$trigger" 2>&1 | while read line; do printf "[x]    | $line\n"; done
+  fi
+}
+
+_clonewebapp(){
+  [[ ! -n $PROJECTDIR_CLONE ]]   && echo "[!] clone projectdir not configured (see config)" && exit 1
+
+  echo "[x] cloning current webapp into $PROJECTDIR_CLONE"
+  [[ -d $PROJECTDIR_CLONE ]] && rm -rf "$PROJECTDIR_CLONE"
+  cp -r "$PROJECTDIR" "/tmp/$NAME"
+  mv "/tmp/$NAME" "$PROJECTDIR_CLONE" 
+}
+
+_checkconfig(){
+  echo "[x] checking config"
+  vars=(NAME GITDIR PROJECTDIR BACKUPFILE DEPLOYLOGFILE DOMAIN); for var in "${vars[@]}"; do [[ ${!var} ]] || echo "configfile is missing variable: $var"; done  
+  vars=(PROJECTSQL SQL_LOGIN SQL_PW SQL_DB SQL_DB_TEST); for var in "${vars[@]}"; do [[ ! ${!var} ]] && unset USE_SQL; done
+  [[ ! -n "$PROJECTDIR_CLONE" ]] && unset USE_CLONE
+  printf "[x] using SQL: " && [[ $USE_SQL ]] && printf "yes\n" || printf "$C_YELLOW no (see config)$C_RESET\n"
+  printf "[x] deploying on clone before doing the real thing: " && [[ $USE_CLONE ]] && printf "yes\n" ||  printf "$C_YELLOW no (see config)$C_RESET\n"
+}
+
+_merge(){
+  (
+    # update to latest source
+    unset GIT_DIR
+    # git reset --hard            # this will create deployment-refusals as soon as somebody does local changes
+    # git clean  -d  -fx ""       # this will delete local changes
+    git stash                     # instead stash local changes (temporary save to gitstack), no loss of local changes, and no git halts
+    git pull origin "$GITBRANCH"  # make sure we have the latest source from our gitrepo ($GITDIR)..note: we dont use pull, since that automatically 
+    # this might also have its benefits : http://longair.net/blog/2009/04/16/git-fetch-and-merge/
+    #git fetch origin              # make sure we have the latest source from our gitrepo ($GITDIR)..note: we dont use pull, since that automatically 
+    #git merge origin "$GITBRANCH" # lets merge the new version on top of our old one
+    
+  ) 2>&1 | while read line; do printf "[x] git> $line\n"; done
+
+  return $?
+}
+
+_clonedb(){
+  mysql -u $SQL_LOGIN -p$SQL_PW -e "DROP DATABASE $1"
+  mysql -u $SQL_LOGIN -p$SQL_PW -e "CREATE DATABASE $1" &&
+  mysql -u $SQL_LOGIN -p$SQL_PW $1 < $PROJECTDIR/$PROJECTSQL 
+  return $?
+}
+
+_header(){
+  echo ""
+  which toilet &>/dev/null && toilet -w120 -f pagga "  $1  " || printf "\n=== $1 ===\n"
+  echo ""
+  DEPLOY_LOG="$DEPLOY_LOG > $1"
+}
+
+# <dirname-of-webapp>    <-- inits a webapplication for deployment 
+init(){
+  echo "[x] initing deployogi dirs"
+  dir="$1"
+  [[ ! -d "$dir" ]] && echo "[!] directory '$dir' does not exist, please think things over" && exit 1
+  cd "$dir"; mkdir deployogi.d && echo "[x] creating '$dir/deployogi.d' dir"
+  cp "$0" . && echo "[x] copying 'deployogi'-bashscript to '$dir/.'"
+  echo "$TPL_CONFIG" > "$dir/deployogi.d/config" && echo "[x] creating '$dir/deployogi.d/config'" || echo "[!] permission prob!"
+  for trigger in "${TRIGGERS[@]}"; do echo "[x] creating '$dir/deployogi.d/$trigger'" && printf "$TPL_TRIGGER" > "$dir/deployogi.d/$trigger"; done
+  [[ ! $? == 0 ]] && echo "[!] wow..permissionproblems..please think things over" && exit 1
+  echo "[x] done! \o/"
+  echo "[x] now cd to $dir and run './deployogi deploy' from there"
+}
+
+#                       <-- manual of deployogi (also works by just passing --manual)
+help(){
+  local tempfile="/tmp/foo.1"
+  hash pod2man 2>&-
+  if [ $? == 1 ]; then echo "please install perl"; exit; fi
+  SCRIPT=`readlink -f $0`
+  echo "(please wait..)"
+  pod2man $SCRIPT > "$tempfile"
+  clear
+  if [ -f "$tempfile" ]; then man "$tempfile"; rm "$tempfile"; fi
+  exit 0
+}
+
+_backup(){
+  _header "backup current version"
+  cd $PROJECTDIR 
+  #currenttag="$(git describe --abbrev=0 --tags)"
+  if [[ $USE_SQL ]]; then 
+    echo "[x] creating backup of current database $SQL_DB into '$PROJECTDIR/$PROJECTSQL'"
+    mysqldump --extended-insert=FALSE -u $SQL_LOGIN -p$SQL_PW $SQL_DB > $PROJECTDIR/$PROJECTSQL 
+  fi
+  echo "[x] make backup of current website: $BACKUPFILE (please wait)"
+  zip -r $BACKUPFILE . | while read line; do printf "\r[x] $i files"; ((i=i+1)); done; echo ""
+  return $?
+}
+
+_usage(){
+  echo "Usage: "
+  grep "^[^_].\+(){$" $0 | while read line; do
+    local cmd=$(echo "$line" | sed "s/(){//g")
+    local info=$(grep -C0 -A0 -B1 "$cmd(){" $0 | sed "N;s/\n.*//g;" )
+    local me=$(basename $0)
+    printf "  $me %-5s %-40s\n" "$cmd" "$info" | grep "#" | sed 's/#//g'
+  done; echo "";
+}
+
+test $# -lt 1 && _checkrequirements && _usage && exit 65
+"$@"
+exit 0
+
+# the manual text (folded in vim for convienence)
+<<=cut#{{{
+=head1 NAME
+
+deploygi - the yoga of autodeployment
+
+=head1 SYNOPSIS
+
+Deployogi is a bashscript which enables easy, automatic deployment of webapplications/databases on staging/production webservers using GIT hooks and bash triggers.
+
+=head1 WHY?
+
+So teams can deploy many webapplications in one and the same way. The maintaining-upgrade-test-and-deploy-cycle for many webapplication can be done in many ways. Handhacking this process will become more and more labourous/specialized as the webapplications mature.
+
+=head1 FOR WHO?
+
+Well not for one-man-banddevelopers, in those cases handhacking is part of the fun! But in case of a devteam it is the only way to be flexible in scalability of your team.
+
+=head1 HOW?
+
+Simply by pushing to a remote git-repository. Only thing to do once is writing a config-file and optionally some triggerfiles ('on.backup' / 'on.update' e.g.). Thats it!
+
+=head1 SEE ALSO
+
+L<https://github.com/coderofsalvation/deployogi>, L<http://git-scm.com>
+
+=head1 LICENSE
+
+BSD License (so everybody can enjoy it)
+
+=head1 AUTHOR
+
+Coder of Salvation / Leon van Kammen 
+=cut#}}}
+
+# vim:fdm=marker

@@ -1,21 +1,20 @@
 Deployogi
 =========
-Deployogi is a bashscript which enables easy, automatic deployment of webapplications/databases on staging/production webservers using GIT hooks and bash triggers.
-
-Say What?
-=========
-in other words: putting a new version of a website in production by simply hitting enter.
+The yoga of autodeployment, in other words: putting a new version of a website in production by simply hitting enter.
 
 Why?
 ====
-So teams can deploy many webapplications in one and the same way.
-The maintaining-upgrade-test-and-deploy-cycle for many webapplication can be done in many ways. 
-Handhacking this process *will* become more and more labourous/specialized as the webapplications mature.
+To move away from handhacking webapplications into production.
+So teams can deploy and upgrade many webapplications in one and the same way.
+The maintaining-upgrade-test-and-deploy-cycle for many webapplication can be done in many ways, and therefore can a 
+counterproductive effect on deadlines. 
 
 For who?
 ========
 Well not for one-man-banddevelopers, in those cases handhacking is part of the fun!
 But in case of a devteam it is the only way to be flexible in scalability of your team.
+Actually `deployogi` applies to Rule 14 of the UN*X philosophy: *Rule of Generation: Avoid hand-hacking; write programs to write programs when you can.*, 
+so if you like unix, you'll like this as well. 
 
 How?
 ====

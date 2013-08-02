@@ -15,7 +15,8 @@ Check the following link to see a [very basic tutorial/showcase of deployogi](ht
 
 > `NOTE`: the showcase is very basic, and does not really show how to extend deployogi. Many webframeworks offer entrypoints to trigger integritytests, 
 > configuration thru console. Please keep in mind that deployogi has been designed to specifically trigger these things, in order to 
-> find out if the deployment is going good or bad (and alternatively refuse to deploy). 
+> find out if the deployment is going good or bad (and alternatively refuse to deploy). Ideally every webapplication has its own deployogi-triggerscripts
+> and/or reuses scripts by using symbolic links.
 
 For who?
 ========

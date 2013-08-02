@@ -52,4 +52,7 @@ Workflow / the philosophy behind this deploymenttool/model
 ==========================================================
 Deployogi assumes a push-backup-clone-merge-test and compare-deploymentmodel.
 Read [this article](http://leon.vankammen.eu/blog/automatic-deployment-with-git-and-deployogi-scripts) to learn more about it.
+Here you can see the simplest way of deploying (for more details read article) : 
+
+<img src="https://dl.dropboxusercontent.com/s/88zzcgb4hp9k641/seqdiagram-deployogi-easy.png?dl=1"> 
 

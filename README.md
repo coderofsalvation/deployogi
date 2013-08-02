@@ -11,7 +11,7 @@ counterproductive effect on deadlines.
 
 Demonstration
 =============
-Check the following link to see a very basic tutorial/showcase(http://playterm.org/r/deployogi-automatic-webdeployment-1375465953)
+Check the following link to see a [very basic tutorial/showcase of deployogi](http://playterm.org/r/deployogi-automatic-webdeployment-1375465953)
 
 > `NOTE`: the showcase is very basic, and does not really show how to extend deployogi. Many webframework support triggering of testing, 
 > configuration thru console. Please keep in mind that deployogi has been designed to specifically trigger these things, in order to 

@@ -1,5 +1,7 @@
 Deployogi
 =========
+<center><img src="https://www.dropbox.com/s/fu1cdwd3it31qvq/yoda-deploy.jpg?dl=1"/></center>
+
 The yoga of autodeployment, in other words: putting a new version of a website in production by simply hitting enter.
 
 Why?

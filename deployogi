@@ -46,7 +46,7 @@ USE_SQL=1
 USE_CLONE=1
 IS_CLONE=0
 
-# template files (folded in vim for convenience)#{{{#{{{
+# template files (folded in vim for convenience)
 TPL_TRIGGER="#!/bin/bash\n\n# nothing happening here..yet\n\n[[ \$IS_CLONE ]] && echo 'script applied on clone!'\n\n# return > 0 if something went wrong and deployment should stop\nreturn 0"#}}}
 TPL_CONFIG='#!/bin/bash
 
@@ -55,8 +55,7 @@ NAME="YourWebApplication"                                 # just a name to creat
 GITDIR="/tmp/test.git"                                    # this is a sharedrepo where we can get our latest sourcecode 
                                                           # NOTE: devs should push to this sharedrepo (see: git init --bare) instead of to a local repo.
 GITBRANCH="master"                                        # which branch to deploy? ("master" for productionserver, "staging" for stagingserver)
-#PROJECTDIR="/var/www/webapps/yourwebbapp"                 # where to deploy? (the location where your webapplication can be visited)
-PROJECTDIR="/tmp/testapp"                                 # where to deploy? (the location where your webapplication can be visited)
+PROJECTDIR="/var/www/webapps/yourwebbapp"                 # where to deploy? (the location where your webapplication can be visited)
 BACKUPFILE="/tmp/$NAME-backup-$(date +"%Y%m%d%H%M").zip"  # where to place backups (things are backedup before actual deployment)
 DEPLOYLOGFILE="/tmp/deployogi-$NAME.log"                  # logfile for later inspection of deployment
 WEBDOMAIN="your.domain.com"                               # domain where the webapplication can be accesed
@@ -64,9 +63,8 @@ WEBDOMAIN="your.domain.com"                               # domain where the web
 # clone settings
 
 # let deployogi try to deploy to a clone before merging/upgrading the real version, (note: your webapp should support running from outside the webroot)
-#PROJECTDIR_CLONE="/var/www/webapps/yourwebbapp/clone"     # where to deploy? (the location where your webapplication can be visited)
-PROJECTDIR_CLONE="/tmp/testapp/new"                       # where to deploy the clone? (first a clone is deployed to see if the tests work at all)
-CLONE_ROOTURL="/new"                                       # where can the clone be accessed thru the web?
+#PROJECTDIR_CLONE="/var/www/webapps/yourwebbapp/clone"      # where to deploy? (the location where your webapplication can be visited)
+#CLONE_ROOTURL="/new"                                       # where can the clone be accessed thru the web?
 
 # SQL settings
 
@@ -74,10 +72,9 @@ CLONE_ROOTURL="/new"                                       # where can the clone
 #SQL_LOGIN="yourlogin"                                     # db login 
 #SQL_PW="somepw"                                           # db password
 #SQL_DB="yourwebapp_live"                                  # db name 
-#SQL_DB_TEST="yourwebapp_live_test"                        # databasename which we can use/create for the clone
+#SQL_DB_CLONE="yourwebapp_live_test"                        # databasename which we can use/create for the clone
 #SQL_DIFF_IGNORETABLES="logs|sessions|timestamps"          # which tables should be ignored in diffing the databases? (nice to what changed in the db right?)
 '
-#}}}
   
 # parse config of project if any
 [[ -f "deployogi.d/config" ]] && source "deployogi.d/config";
@@ -112,7 +109,7 @@ deploy(){
     if [[ $USE_CLONE ]]; then
       _header "clone deployment"
       IS_CLONE=1
-      if [[ $USE_SQL ]]; then _clonedb "$SQL_DB_TEST"; fi # create a testdatabase (and insert the current backup into it)
+      if [[ $USE_SQL ]]; then _clonedb "$SQL_DB_CLONE"; fi # create a testdatabase (and insert the current backup into it)
       _clonewebapp || _haltdeploy
       echo "[x] entering $PROJECTDIR_CLONE"
       CURRENTDIR="$PROJECTDIR_CLONE"
@@ -172,7 +169,7 @@ _clonewebapp(){
 _checkconfig(){
   echo "[x] checking config"
   vars=(NAME GITDIR PROJECTDIR BACKUPFILE DEPLOYLOGFILE DOMAIN); for var in "${vars[@]}"; do [[ ${!var} ]] || echo "configfile is missing variable: $var"; done  
-  vars=(PROJECTSQL SQL_LOGIN SQL_PW SQL_DB SQL_DB_TEST); for var in "${vars[@]}"; do [[ ! ${!var} ]] && unset USE_SQL; done
+  vars=(PROJECTSQL SQL_LOGIN SQL_PW SQL_DB SQL_DB_CLONE); for var in "${vars[@]}"; do [[ ! ${!var} ]] && unset USE_SQL; done
   [[ ! -n "$PROJECTDIR_CLONE" ]] && unset USE_CLONE
   printf "[x] using SQL: " && [[ $USE_SQL ]] && printf "yes\n" || printf "$C_YELLOW no (see config)$C_RESET\n"
   printf "[x] deploying on clone before doing the real thing: " && [[ $USE_CLONE ]] && printf "yes\n" ||  printf "$C_YELLOW no (see config)$C_RESET\n"

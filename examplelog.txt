@@ -28,7 +28,7 @@ yourwebsite_live_test
 [x] cfg.yaml.php: var 'db[presets][live]' set to 'mysql://userfoo:somepasswdng@localhost/yourwebsite_live_test;charset=utf8'
 [x] cfg.yaml.php: var 'global[preset]' set to 'live'
 [x] cfg.yaml.php: var 'global[emailmaintainer]' set to 'you@yourcompany.com'
-[x] cfg.yaml.php: var 'email[presets][gmail][password]' set to 'worlddomination'
+[x] cfg.yaml.php: var 'email[presets][gmail][password]' set to 'somepasswd'
 [x] setting permissions
 [x] upgrading db (custom/install/r102_jellybean): 'action.notifyYourCompanBookCustomer.php'
 [x] upgrading db (custom/install/r102_jellybean): 'database.YourWebsiteMails.attachements.php'
@@ -240,7 +240,7 @@ yourwebsite_live_test
 [x] cfg.yaml.php: var 'db[presets][live]' set to 'mysql://userfoo:somepasswdng@localhost/yourwebsite_live_test;charset=utf8'
 [x] cfg.yaml.php: var 'global[preset]' set to 'live'
 [x] cfg.yaml.php: var 'global[emailmaintainer]' set to 'you@yourcompany.com'
-[x] cfg.yaml.php: var 'email[presets][gmail][password]' set to 'worlddomination'
+[x] cfg.yaml.php: var 'email[presets][gmail][password]' set to 'somepasswd'
 [x] setting permissions
 [x] hmm..trying again with sudo
 [x] upgrading db (custom/install/r102_jellybean): 'action.notifyYourCompanBookCustomer.php'

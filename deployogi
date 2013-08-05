@@ -80,14 +80,15 @@ WEBDOMAIN="your.domain.com"                               # domain where the web
 if [[ -f "deployogi.d/config" ]]; then source "deployogi.d/config"; else echo "deployogi.d/config file not found" && exit 1; fi;
 
 # catch exit 
+trapped=1;
 trap "_onexit" EXIT SIGINT SIGTERM ERR 0 1
  
 _onexit(){
+  echo "exitging $trapped" 
   if [[ ${#TRIGGERDIR} > 0  ]]; then 
     trigger="$TRIGGERDIR/deployi.d/70-on.exit"
     [[ -f "$trigger" ]] && source "$trigger"           # fire 'deployogi.d/on.exit' if any
   fi 
-  exit $1
 }
 
 _checkrequirements(){
@@ -130,9 +131,8 @@ deploy(){
 }
 
 _haltdeploy(){
-  echo "1" 
-  printf "\n$C_RED[x] something went wrong..halting deployment $C_RESET"
-  _onexit 1 # continue to on.exit hook
+  printf "hoi" #\n$C_RED[x] something went wrong..halting deployment $C_RESET"
+  exit 1
 }
 
 _deployapp(){

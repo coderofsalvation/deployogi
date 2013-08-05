@@ -8,8 +8,8 @@ Why?
 ====
 To move away from handhacking webapplications into production.
 So teams can deploy and upgrade many webapplications in one and the same way.
-The maintaining-upgrade-test-and-deploy-cycle for many webapplication can be done in many ways, and therefore can a 
-counterproductive effect on deadlines. 
+The deployment-cycle for many webapplication can be done in many (manual) ways, and therefore can have a 
+counterproductive effect on deadlines and teamproductivity in genereal. 
 
 Demonstration
 =============

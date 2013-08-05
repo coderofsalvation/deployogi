@@ -22,6 +22,17 @@ Also, check the following link to see a [very basic tutorial/showcase of deployo
 > find out if the deployment is going good or bad (and alternatively refuse to deploy). Ideally every webapplication has its own deployogi-triggerscripts
 > and/or reuses scripts by using symbolic links.
 
+Installation
+============
+For now lets assume you wanna get started asap, then copy/paste this oneliner into your terminal :
+
+    wget "https://raw.github.com/coderofsalvation/deployogi/master/deployogi" -O deployogi; chmod 755 deployogi; 
+
+Then run:
+
+    ./deployogi
+
+
 For who?
 ========
 Well not for one-man-banddevelopers, in those cases handhacking is part of the fun!
@@ -59,16 +70,6 @@ Requirements
 * something which supports bash (usually LAMP/linuxserver)
 * a webapplication which supports cli-invokation (to configure frameworkrelated variables from the commandline)
 * you have to know about of commandline (bash) stuff 
-
-Installation
-============
-For now lets assume you wanna get started asap, then copy/paste this oneliner into your terminal :
-
-    wget "https://raw.github.com/coderofsalvation/deployogi/master/deployogi" -O deployogi; chmod 755 deployogi; 
-
-Then run:
-
-    ./deployogi
 
 Workflow / the philosophy behind this deploymenttool/model
 ==========================================================

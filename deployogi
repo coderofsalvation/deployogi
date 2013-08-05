@@ -130,8 +130,8 @@ deploy(){
 }
 
 _haltdeploy(){
-  printf "hoi"
-  printf "\n$C_GREEN[x] something went wrong..halting deployment $C_RESET"
+  echo "1" 
+  printf "\n$C_RED[x] something went wrong..halting deployment $C_RESET"
   _onexit 1 # continue to on.exit hook
 }
 

@@ -159,7 +159,7 @@ _deploytrigger(){
   printf "$C_GREEN[x] %-40s $C_RESET @ $trigger\n" "$desc"
   if [[ -f "$trigger" ]]; then 
     cd $CURRENTDIR;
-    source "$trigger" 2>&1 || _haltdeploy | while read line; do printf "[x]    | $line\n"; done 
+    source "$trigger" 2>&1 || _haltdeploy # while read line; do printf "[x]    | $line\n"; done || _haltdeploy
   else
     echo "[x] $trigger not found"
   fi

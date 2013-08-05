@@ -13,7 +13,7 @@ counterproductive effect on deadlines and teamproductivity in genereal.
 
 Demonstration
 =============
-This is a log of an [actual deploymentlog](https://raw.github.com/coderofsalvation/deployogi/master/examplelog.txt) facilitated by deployogi.
+This is a log of an [actual deploymentlog](https://raw.github.com/coderofsalvation/deployogi/master/example/examplelog.txt) facilitated by deployogi.
 
 Also, check the following link to see a [very basic tutorial/showcase of deployogi](http://playterm.org/r/deployogi-automatic-webdeployment-1375465953)
 
@@ -43,7 +43,7 @@ so if you like unix, you'll like this as well.
 How?
 ====
 Simply by pushing to a remote git-repository.
-Only thing to do once is writing a config-file. 
+Only thing to do once is writing a config-file, and make sure you let git use deployogi when [you push the repo with this git-hook](https://raw.github.com/coderofsalvation/deployogi/master/example/post-receive). 
 Thats it!
 
 Further extension can be done using deployogi hook-scripts (n a similar fashion as git hooks), because deployogi automatically installs this folder to your githooks-dir:

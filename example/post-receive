@@ -1,0 +1,32 @@
+#!/bin/bash
+#
+# An example hook script for the "post-receive" GIT event. (usually this file resides in yourgitrepo.git/hooks/. )
+#
+# NOTE: only works with bash shebang (#!/bin/bash in first line of file..sometimes this is /bin/sh..change this please)
+#
+# The "post-receive" script is run after receive-pack has accepted a pack
+# and the repository has been updated.  It is passed arguments in through
+# stdin in the form
+#  <oldrev> <newrev> <refname>
+# For example:
+#  aa453216d1b3e49e7f6f98441fa56946ddcd6a20 68f7abf4e6f922807889f52bc043ecd31b79f814 refs/heads/master
+#
+# see contrib/hooks/ for a sample, or uncomment the next line and
+# rename the file to "post-receive".
+
+#. /usr/share/doc/git-core/contrib/hooks/post-receive-email
+MYPATH=$(dirname "$(readlink -f "$0")" )
+
+# deploy if branch meets certain name   
+while read oldrev newrev refname
+do
+    branch=$(git rev-parse --symbolic --abbrev-ref $refname)
+    if [[ "$branch" == "master" ]]; then 
+      cd $MYPATH
+      deployogi deploy # let deployogi do the work!
+    else 
+      echo "sorry..will not do anything with $branch (only masterbranch)"
+    fi
+done
+
+

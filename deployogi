@@ -38,6 +38,7 @@ VERSION="0.1"
 VERSIONFANCY="$C_WHITE v$VERSION$C_GREEN @ https://github.com/coderofsalvation/deployogi$C_RESET"
 REALPATH="$( dirname "$(readlink -f "$0")" )"
 TRIGGERDIR=""
+MICROLOGFILE="/tmp/deployogi.$(date +"%Y%m%d%H%M").log"
 DEPLOY_LOG="deploystart"
 TRIGGERS=(10-on.begin 20-on.backup 30-on.merge 40-on.configure 50-on.generatedocs 60-on.test 70-on.exit )
 REQUIREMENTS=(git)
@@ -47,7 +48,7 @@ USE_CLONE=1
 IS_CLONE=0
 
 # template files (folded in vim for convenience)
-TPL_TRIGGER="#!/bin/bash\n\n# nothing happening here..yet\n\n[[ \$IS_CLONE ]] && echo 'script applied on clone!'\n\n# return > 0 if something went wrong and deployment should stop\nreturn 0"#}}}
+TPL_TRIGGER="#!/bin/bash\n\n# nothing happening here..yet\n\n# [[ \$IS_CLONE ]] && echo '$0 applied on clone!'\n\n# return > 0 if something went wrong and deployment should stop\nreturn 0"#}}}
 TPL_CONFIG='#!/bin/bash
 
 # mandatory
@@ -82,6 +83,10 @@ if [[ -f "deployogi.d/config" ]]; then source "deployogi.d/config"; else echo "d
 # catch exit 
 trapped=1;
 trap "_onexit" EXIT SIGINT SIGTERM ERR 0 1
+
+_print(){
+  printf "$C_GREEN[deployogi]$C_RESET $1\n"
+}
  
 _onexit(){
   trigger="$TRIGGERDIR/deployogi.d/70-on.exit"
@@ -98,6 +103,11 @@ _checkrequirements(){
   done;
 }
 
+# perfect to output to an ircchannel on the end of the deployment
+_microlog(){
+  printf " > $1" >> "$MICROLOGFILE"
+}
+
 #                       <-- starts deployment of webapplication (usually called by git hook)
 deploy(){
   :>"$DEPLOYLOGFILE" && chmod 777 "$DEPLOYLOGFILE" # empty and initialize logfile
@@ -108,30 +118,34 @@ deploy(){
     _checkconfig 
     _deploytrigger "beginning deployment" "10-on.begin" || _haltdeploy
     _deploytrigger "creating backup of current webapp" "20-on.backup" || _haltdeploy
-    _backup || _haltdeploy
+    echo " *FIXME backup disabled"
+    #_deploytrigger "creating backup of current webapp" "20-on.backup" _backup || _haltdeploy
     if [[ $USE_CLONE ]]; then
       _header "clone deployment"
       IS_CLONE=1
       if [[ $USE_SQL ]]; then _clonedb "$SQL_DB_CLONE"; fi # create a testdatabase (and insert the current backup into it)
       _clonewebapp || _haltdeploy
-      echo "[x] entering $PROJECTDIR_CLONE"
+      _print "entering $PROJECTDIR_CLONE"
       CURRENTDIR="$PROJECTDIR_CLONE"
       _deployapp "clone version" || _haltdeploy # halt if clone deployment went wrong
       if [[ $USE_SQL ]]; then _dbdiff "$PROJECTDIR_CLONE"; fi 
       unset IS_CLONE
     fi 
+    _microlog "clone went fine..starting real deployment"
     printf "\n\n$C_YELLOW[!] about to do the real deployment in 10 secs..press ctrl-c to abort$C_RESET\n"
     for ((i=0; i < 10; i++ )); do printf "."; sleep 1s; done;
     _header "real deployment"
     CURRENTDIR="$PROJECTDIR"
     _deployapp "live version" || _haltdeploy # halt if deployment went wrong 
     if [[ $USE_SQL ]]; then _dbdiff "$PROJECTDIR"; fi 
+    _microlog "done..deployment went fine \o/!"
   ) | while read line; do printf "$line\n"; printf "$line\n" >> "$DEPLOYLOGFILE"; done # tee doesnt support colors and create bufferproblems
   sed -i -r "s:\x1B\[[0-9;]*[mK]::g" "$DEPLOYLOGFILE" # remove colors
 }
 
 _haltdeploy(){
-  echo "[x] something went wrong..halting deployment" 
+  _microlog "something went wrong..halting deployment" 
+  cat "$MICROLOGFILE"
   exit 1
 }
 
@@ -156,31 +170,32 @@ _deploytrigger(){
   function="$3"
   [[ -n "$3" ]] && eval $function
   trigger="$TRIGGERDIR/$triggerfile"; 
-  printf "$C_GREEN[x] %-40s $C_RESET @ $trigger\n" "$desc"
+  printf "$C_GREEN[deployogi] %-40s $C_RESET @ $trigger\n" "$desc"
   if [[ -f "$trigger" ]]; then 
     cd $CURRENTDIR;
     source "$trigger" 2>&1 || _haltdeploy # while read line; do printf "[x]    | $line\n"; done || _haltdeploy
   else
-    echo "[x] $trigger not found"
+    _print "$triggerfile not found :("
   fi
+  _microlog "$desc" 
 }
 
 _clonewebapp(){
   [[ ! -n $PROJECTDIR_CLONE ]]   && echo "[!] clone projectdir not configured (see config)" && exit 1
 
-  echo "[x] cloning current webapp into $PROJECTDIR_CLONE"
+  _print "cloning current webapp into $PROJECTDIR_CLONE"
   [[ -d $PROJECTDIR_CLONE ]] && rm -rf "$PROJECTDIR_CLONE"
   cp -r "$PROJECTDIR" "/tmp/$NAME"
   mv "/tmp/$NAME" "$PROJECTDIR_CLONE" 
 }
 
 _checkconfig(){
-  echo "[x] checking config"
+  _print "checking config"
   vars=(NAME GITDIR PROJECTDIR BACKUPFILE DEPLOYLOGFILE WEBDOMAIN); for var in "${vars[@]}"; do if [[ ! ${!var} ]]; then echo "configfile has missing variable: $var" && exit 1; fi; done  
   vars=(PROJECTSQL SQL_LOGIN SQL_PW SQL_DB SQL_DB_CLONE); for var in "${vars[@]}"; do [[ ! ${!var} ]] && unset USE_SQL; done
   [[ ! -n "$PROJECTDIR_CLONE" ]] && unset USE_CLONE
-  printf "[x] using SQL: " && [[ $USE_SQL ]] && printf "yes\n" || printf "$C_YELLOW no (see config)$C_RESET\n"
-  printf "[x] deploying on clone before doing the real thing: " && [[ $USE_CLONE ]] && printf "yes\n" ||  printf "$C_YELLOW no (see config)$C_RESET\n"
+  printf "[deployogi] using SQL: " && [[ $USE_SQL ]] && printf "yes\n" || printf "$C_YELLOW no (see config)$C_RESET\n"
+  printf "[deployogi] deploying on clone before doing the real thing: " && [[ $USE_CLONE ]] && printf "yes\n" ||  printf "$C_YELLOW no (see config)$C_RESET\n"
 }
 
 _merge(){
@@ -195,7 +210,7 @@ _merge(){
     #git fetch origin              # make sure we have the latest source from our gitrepo ($GITDIR)..note: we dont use pull, since that automatically 
     #git merge origin "$GITBRANCH" # lets merge the new version on top of our old one
     
-  ) 2>&1 | while read line; do printf "[x]    | git> $line\n"; done
+  ) 2>&1 | while read line; do printf "[deployogi]    | git> $line\n"; done
 
   return $?
 }
@@ -216,16 +231,16 @@ _header(){
 
 # <dirname-of-webapp>    <-- inits a webapplication for deployment 
 init(){
-  echo "[x] initing deployogi dirs"
+  _print "initing deployogi dirs"
   dir="$1"
   [[ ! -d "$dir" ]] && echo "[!] directory '$dir' does not exist, please think things over" && exit 1
-  cd "$dir"; mkdir deployogi.d && echo "[x] creating '$dir/deployogi.d' dir"
-  [[ ! -f "$dir/deployogi" ]] && cp "$0" . && echo "[x] copying 'deployogi'-bashscript to '$dir/.'"
-  echo "$TPL_CONFIG" > "$dir/deployogi.d/config" && echo "[x] creating '$dir/deployogi.d/config'" || echo "[!] permission prob!"
-  for trigger in "${TRIGGERS[@]}"; do echo "[x] creating '$dir/deployogi.d/$trigger'" && printf "$TPL_TRIGGER" > "$dir/deployogi.d/$trigger"; done
+  cd "$dir"; mkdir deployogi.d && _print "creating '$dir/deployogi.d' dir"
+  [[ ! -f "$dir/deployogi" ]] && cp "$0" . && _print "copying 'deployogi'-bashscript to '$dir/.'"
+  echo "$TPL_CONFIG" > "$dir/deployogi.d/config" && _print "creating '$dir/deployogi.d/config'" || echo "[!] permission prob!"
+  for trigger in "${TRIGGERS[@]}"; do _print "creating '$dir/deployogi.d/$trigger'" && printf "$TPL_TRIGGER" > "$dir/deployogi.d/$trigger"; done
   [[ ! $? == 0 ]] && echo "[!] wow..permissionproblems..please think things over" && exit 1
-  echo "[x] done! \o/"
-  echo "[x] now cd to $dir and run './deployogi deploy' from there"
+  _print "done! \o/"
+  _print "now cd to $dir and run './deployogi deploy' from there"
 }
 
 #                       <-- manual of deployogi (also works by just passing --manual)

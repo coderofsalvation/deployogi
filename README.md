@@ -11,7 +11,9 @@ counterproductive effect on deadlines.
 
 Demonstration
 =============
-Check the following link to see a [very basic tutorial/showcase of deployogi](http://playterm.org/r/deployogi-automatic-webdeployment-1375465953)
+This is a log of an [actual deploymentlog](https://raw.github.com/coderofsalvation/deployogi/master/examplelog.txt) facilitated by deployogi.
+
+Also, check the following link to see a [very basic tutorial/showcase of deployogi](http://playterm.org/r/deployogi-automatic-webdeployment-1375465953)
 
 > `NOTE`: the showcase is very basic, and does not really show how to extend deployogi. Many webframeworks offer entrypoints to trigger integritytests, 
 > configuration thru console. Please keep in mind that deployogi has been designed to specifically trigger these things, in order to 
@@ -30,7 +32,20 @@ How?
 Simply by pushing to a remote git-repository.
 Only thing to do once is writing a config-file. 
 Thats it!
-Further extension can be done using deployogi hook-scripts (n a similar fashion as git hooks)
+
+Further extension can be done using deployogi hook-scripts (n a similar fashion as git hooks), because deployogi automatically installs this folder to your githooks-dir:
+
+    deployogi.d/config             <-- here you can define your project variables, so deployogi can do its magic
+    deployogi.d/10-on.begin
+    deployogi.d/20-on.backup
+    deployogi.d/30-on.begin
+    deployogi.d/40-on.merge
+    deployogi.d/50-on.configure
+    deployogi.d/60-on.generatedocs
+    deployogi.d/70-on.test
+    deployogi.d/80-on.exit
+
+> NOTE: these files represent triggers which are described in the sequencediagram below.
 
 Are git hooks not enough?
 =========================
@@ -39,7 +54,7 @@ No, if you dive into this matter you'll soon find out there will be many obstacl
 Requirements
 ============
 
-* LAMP server
+* something which supports bash (usually LAMP/linuxserver)
 * a webapplication which supports cli-invokation (to configure frameworkrelated variables from the commandline)
 * you have to know about of commandline (bash) stuff 
 

@@ -1,0 +1,624 @@
+
+    ┏━ ┏━┃┏━┛┃ ┃┃ ┃┏━┃  ┏━┛┃ ┃┏━┃┏━┃┏━┛┏━ ━┏┛  ┃ ┃┏━┛┏━┃┏━┛┛┏━┃┏━ 
+    ┏━┃┏━┃┃  ┏┛ ┃ ┃┏━┛  ┃  ┃ ┃┏┏┛┏┏┛┏━┛┃ ┃ ┃   ┃ ┃┏━┛┏┏┛━━┃┃┃ ┃┃ ┃
+    ━━ ┛ ┛━━┛┛ ┛━━┛┛    ━━┛━━┛┛ ┛┛ ┛━━┛┛ ┛ ┛    ┛ ━━┛┛ ┛━━┛┛━━┛┛ ┛
+
+[x] make backup of current website: /tmp/yourwebsite-backup-01-01-2010-1123.zip (please wait)
+[x] done
+
+    ┏━┛┏━┃┃ ┃┏━┛  ┏━ ┏━┛┏━┃┃  ┏━┃┃ ┃┏┏ ┏━┛┏━ ━┏┛
+    ┏━┛┏━┃┏┛ ┏━┛  ┃ ┃┏━┛┏━┛┃  ┃ ┃━┏┛┃┃┃┏━┛┃ ┃ ┃ 
+    ┛  ┛ ┛┛ ┛━━┛  ━━ ━━┛┛  ━━┛━━┛ ┛ ┛┛┛━━┛┛ ┛ ┛ 
+
+Saved working directory and index state WIP on master: 1a5211d .htacces update
+HEAD is now at 1a5211d .htacces update
+Updating 1a5211d..fc996ed
+Fast-forward
+ src/test/box/test |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+Already up-to-date. Yeeah!
+[x] configuring /var/www/website/yourwebsite/src/new
+[x] src/data/cfg.yaml.php does not exist..creating..
+[x] cfg.yaml.php: var 'global[rootdir]' set to 'new/src'
+[x] cfg.yaml.php: var 'global[host]' set to 'yourwebsite.yourcompany.com'
+[x] cfg.yaml.php: var 'db[presets][development]' set to 'mysql://userfoo:somepasswdng@localhost/yourwebsite_live_test;charset=utf8'
+[x] 'src/data/cfg.yaml.php' was patched again
+database()
+yourwebsite_live_test
+[x] cfg.yaml.php: var 'db[presets][live]' set to 'mysql://userfoo:somepasswdng@localhost/yourwebsite_live_test;charset=utf8'
+[x] cfg.yaml.php: var 'global[preset]' set to 'live'
+[x] cfg.yaml.php: var 'global[emailmaintainer]' set to 'you@yourcompany.com'
+[x] cfg.yaml.php: var 'email[presets][gmail][password]' set to 'worlddomination'
+[x] setting permissions
+[x] upgrading db (custom/install/r102_jellybean): 'action.notifyYourCompanBookCustomer.php'
+[x] upgrading db (custom/install/r102_jellybean): 'database.YourWebsiteMails.attachements.php'
+[x] testing mental health of application: sane!
+[x] Ok..going to generate the documentation
+[x] Ok..going to run the whitebox tests
+
+==> 9-http-measure.php
+
+==> 10-http-stresstest.php
+#!/usr/bin/php 
+preparing BOGUSEVENT-REST request
+sending out 100 request(s)..........
+total reqs : 100 request
+total time : 3.7297089099884 seconds
+average request  : 0.037297089099884 seconds
+average wanted   : < 0.06 seconds (NICE!)
+
+==> 100-class.sutra.php
+
+==> 110-lib.activerecord.php
+
+==> 500-class.versioning.php
+
+==> 510-class.inputEvent.v1.0.php
+testing event 'TRANSACTION_FINALIZED'
+testing event 'YOURCOMPANY_TRANSACTION_CONFIRMATION'
+testing event 'BOGUSEVENT'
+testing event 'WEBSITE_LOG'
+
+==> 520-lib.phpmailer.php
+Testing PHPMailer in normal local sendmail-mode
+connecting (max 5 times) to POP3 server to receive the sent mail...
+..nothing..lets retry after 3 secs
+I found the sent mail in the inbox! \o/ \o/ \o/
+
+==> 530-database.yourwebsiteMail.manager.php
+email added
+
+email successfully sent
+connecting (max 5 times) to POP3 server to receive the sent mail...
+..nothing..lets retry after 3 secs
+I found the sent mail in the inbox! \o/ \o/ \o/
+
+==> 540-class.yourwebsiteMessage.manager.php
+Testing event 'BOGUSEVENT' & output process & message handling...
+[SUCCESS] Testing of event processing & message handling was successfull with no errors!
+
+==> 666-YOURCOMPANY_TRANSACTION_CONFIRMATION_test_issue732.php
+searching for BCOcomponent confirmed
+
+==> 1000-yourwebsiteserver.bash
+starting yourwebsite server
+nice..got pid (13997)
+stopping yourwebsite server
+
+==> 1001-asynchronphp.bash
+stopping yourwebsite server
+testing asynchronphp package
+[ tests/connects ]
+[x] sending out 50 requests
+[ tests/sendjson ]
+[ sending json request 'connect.json' ]
+{ "foo": "bar" }
+[ sending json request 'corrupt.json' ]
+{ ,sdf$: }},
+[ tests/syntaxcheck ]
+
+==> 5000-database.yourwebsiteMessage.r1.php
+
+==> 10010-yourwebsiteserver-start.bash
+stopping yourwebsite server
+starting yourwebsite server
+nice..got pid (14415)
+
+==> 10100-lib.asynchronphp.php
+succesfully send garbage data to server
+
+==> 10105-lib.yourwebsiteio.php
+adding fake action for fake user to the database
+
+*FIXME* nreqs set to 20 because of memoryleak (see issue546) 
+== sending out 20 requests of event 'TRANSACTION_FINALIZED'..
+   total reqs : 20 request
+   total time : 0.10571599006653 seconds
+   average request  : 0.0052857995033264 seconds
+   average wanted   : < 0.05 seconds (NICE!)
+
+==> 10205-memtest.php
+{
+  "date":"2013-06-28 15:06:00",
+  "exectime":3.123349905014,
+  "data":{
+    "returncode":0,
+    "msg":"",
+    "data":{
+      "helloWorld":{
+        "msg":"outputComponent helloWorld was succesfull",
+        "errMsg":"",
+        "returncode":0
+      }
+    }
+  },
+  "status":"OK"
+}
+Used memory:1480.9375Kbyte(s)
+Memtest ran successfully without reaching maxmem!
+Execution time(in secs): 1.091166973114
+
+==> 10505-lib.yourwebsiteio.customactions.php
+adding fake action for fake user to the database
+
+NICE!..2 similar actions in db (global+custom), and yet yourwebsiteio returns only 1
+
+==> 19999-yourwebsiteserver-stop.bash
+stopping yourwebsite server
+[!] ERROR: ERROR: '19999-yourwebsiteserver-stop.bash'
+[x] variable 'error_count' set to '1'
+[x] variable 'error' set to 'ERROR: '19999-yourwebsiteserver-stop.bash''
+
+==> 30000-someActionFinalizedComponent-form-editaction.php
+inserted action to db
+[event: TRANSACTION_FINALIZED plugin: notifyFinalized] plugin initialized
+[event: TRANSACTION_FINALIZED plugin: notifyFinalized] tested with empty data
+[event: TRANSACTION_FINALIZED plugin: notifyFinalized] tested with TEST data
+[event: TRANSACTION_FINALIZED plugin: notifyFinalized] removed test datas
+[event: TRANSACTION_FINALIZED plugin: notifyFinalized] TEST SUCCESSFULL
+
+==> 40000-toJsonFile.php
+inserted action with id #999999 to db
+[event: WEBSITE_LOG | plugin: toJsonFile] plugin initialized
+[event: WEBSITE_LOG | plugin: toJsonFile] tested with empty data
+[event: WEBSITE_LOG | plugin: toJsonFile] tested with TEST data
+[event: WEBSITE_LOG | plugin: toJsonFile] simulated process function successfully, created test file
+[event: WEBSITE_LOG | plugin: toJsonFile] removed the created test file, and removed the previously created record from db
+[event: WEBSITE_LOG | plugin: toJsonFile] TEST SUCCESSFULL
+
+==> 50000-syntaxcheck.bash
+DISABLED FOR NOW
+
+==> 66666-cleanup.php
+[cleanup testing] added 5000 records to db
+[cleanup testing] executed 'cleanup 1000'
+[cleanup testing] checked number of records in db and 1000 left
+[cleanup testing] removed the rest from the database
+[cleanup testing] >>>>> TEST SUCCESSFULL, execution time (sec): 1.3084180355072 <<<<<
+
+[!] warnings: 0
+[!] errors  : 1
+[!] last error: ERROR: '19999-yourwebsiteserver-stop.bash'
+[!] errors found! see logfiles '../../data/test.txt*' for more info
+, and last test-output ../../data/test.txt
+
+[x] Ok..going to run the graybox tests
+
+==> 10-example-advanced
+[x] shared vars are: http://www.google.com, ., , PASSWORD, ../../data/test.cookie.txt, ../../data/test.cookie.jar.txt, ../../data/test.txt, your@email.com, 
+(this test is out of order for now)
+
+==> 20-example-simple
+PING www.google.com (173.194.41.148) 56(84) bytes of data.
+64 bytes from lhr08s03-in-f20.1e100.net (173.194.41.148): icmp_req=1 ttl=54 time=1.82 ms
+
+--- www.google.com ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 1.828/1.828/1.828/0.000 ms
+
+==> 25-http-accessible
+requesting url: http://yourwebsite.yourcompany.com
+
+==> 30-test-REST-v1.0-jsondata.bash
+requesting 100 BOGUSEVENT asynchronous requests (BOGUSEVENT MAYHEM!)
+(waiting)
+
+==> 510-cli-action
+added
+id: #1000005
+enabled
+disabled
+deleted
+
+
+[!] warnings: 0
+[!] errors  : 0
+[!] software is feeling groovy! :)
+, and last test-output ../../data/test.txt
+
+    ┏━┃┏━┛┏━┃┃    ┏━ ┏━┛┏━┃┃  ┏━┃┃ ┃┏┏ ┏━┛┏━ ━┏┛
+    ┏┏┛┏━┛┏━┃┃    ┃ ┃┏━┛┏━┛┃  ┃ ┃━┏┛┃┃┃┏━┛┃ ┃ ┃ 
+    ┛ ┛━━┛┛ ┛━━┛  ━━ ━━┛┛  ━━┛━━┛ ┛ ┛┛┛━━┛┛ ┛ ┛ 
+
+[x] OK, the 'fake' deployment went ok \o/
+[x] about to do the real deployment in 10 secs..press ctrl-c to abort
+..........Saved working directory and index state WIP on master: 1a5211d .htacces update
+HEAD is now at 1a5211d .htacces update
+Updating 1a5211d..fc996ed
+Fast-forward
+ src/test/box/test |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+Already up-to-date. Yeeah!
+[x] configuring /var/www/website/yourwebsite
+[x] src/data/cfg.yaml.php does not exist..creating..
+[x] cfg.yaml.php: var 'global[rootdir]' set to '/'
+[x] cfg.yaml.php: var 'global[host]' set to 'yourwebsite.yourcompany.com'
+[x] cfg.yaml.php: var 'db[presets][development]' set to 'mysql://userfoo:somepasswdng@localhost/yourwebsite_live_test;charset=utf8'
+[x] 'src/data/cfg.yaml.php' was patched again
+database()
+yourwebsite_live_test
+[x] cfg.yaml.php: var 'db[presets][live]' set to 'mysql://userfoo:somepasswdng@localhost/yourwebsite_live_test;charset=utf8'
+[x] cfg.yaml.php: var 'global[preset]' set to 'live'
+[x] cfg.yaml.php: var 'global[emailmaintainer]' set to 'you@yourcompany.com'
+[x] cfg.yaml.php: var 'email[presets][gmail][password]' set to 'worlddomination'
+[x] setting permissions
+[x] hmm..trying again with sudo
+[x] upgrading db (custom/install/r102_jellybean): 'action.notifyYourCompanBookCustomer.php'
+[x] upgrading db (custom/install/r102_jellybean): 'database.YourWebsiteMails.attachements.php'
+[x] testing mental health of application: sane!
+
+[x] Ok..going to generate the documentation
+
+documenting 10 entitiesdocumenting 11 entitiesdocumenting 12 entitiesdocumenting 13 entitiesdocumenting 14 entitiesdocumenting 15 entitiesdocumenting 16 entitiesdocumenting 17 entitiesdocumenting 18 entitiesdocumenting 19 entitiesdocumenting 20 entitiesdocumenting 21 entitiesdocumenting 22 entitiesdocumenting 23 entitiesdocumenting 24 entitiesdocumenting 25 entitiesdocumenting 26 entitiesdocumenting 27 entitiesdocumenting 28 entitiesdocumenting 29 entitiesdocumenting 30 entitiesdocumenting 31 entitiesdocumenting 32 entitiesdocumenting 33 entitiesdocumenting 34 entitiesdocumenting 35 entitiesdocumenting 36 entitiesdocumenting 37 entitiesdocumenting 38 entitiesdocumenting 39 entitiesdocumenting 40 entitiesdocumenting 41 entitiesdocumenting 42 entitiesdocumenting 43 entitiesdocumenting 44 entitiesdocumenting 45 entitiesdocumenting 46 entitiesdocumenting 47 entitiesdocumenting 48 entitiesdocumenting 49 entitiesdocumenting 50 entitiesdocumenting 51 entitiesdocumenting 52 entitiesdocumenting 53 entitiesdocumenting 54 entitiesdocumenting 55 entitiesdocumenting 56 entitiesdocumenting 57 entitiesdocumenting 58 entitiesdocumenting 59 entitiesdocumenting 60 entitiesdocumenting 61 entitiesdocumenting 62 entitiesdocumenting 63 entitiesdocumenting 64 entitiesdocumenting 65 entitiesdocumenting 66 entitiesdocumenting 67 entitiesdocumenting 68 entitiesdocumenting 69 entitiesdocumenting 70 entitiesdocumenting 71 entitiesdocumenting 72 entitiesdocumenting 73 entitiesdocumenting 74 entitiesdocumenting 75 entitiesdocumenting 76 entitiesdocumenting 77 entitiesdocumenting 78 entitiesdocumenting 79 entitiesdocumenting 80 entitiesdocumenting 81 entitiesdocumenting 82 entitiesdocumenting 83 entitiesdocumenting 84 entitiesdocumenting 85 entitiesdocumenting 86 entitiesdocumenting 87 entitiesdocumenting 88 entitiesdocumenting 89 entitiesdocumenting 90 entitiesdocumenting 91 entitiesdocumenting 92 entitiesdocumenting 93 entitiesdocumenting 94 entitiesdocumenting 95 entitiesdocumenting 96 entitiesdocumenting 97 entitiesdocumenting 98 entitiesdocumenting 99 entitiesdocumenting 100 entitiesdocumenting 101 entitiesdocumenting 102 entitiesdocumenting 103 entitiesdocumenting 104 entitiesdocumenting 105 entitiesdocumenting 106 entitiesdocumenting 107 entitiesdocumenting 108 entitiesdocumenting 109 entitiesdocumenting 110 entitiesdocumenting 111 entitiesdocumenting 112 entitiesdocumenting 113 entitiesdocumenting 114 entitiesdocumenting 115 entitiesdocumenting 116 entitiesdocumenting 117 entitiesdocumenting 118 entitiesdocumenting 119 entitiesdocumenting 120 entitiesdocumenting 121 entitiesdocumenting 122 entitiesdocumenting 123 entitiesdocumenting 124 entitiesdocumenting 125 entitiesdocumenting 126 entitiesdocumenting 127 entitiesdocumenting 128 entitiesdocumenting 129 entitiesdocumenting 130 entitiesdocumenting 131 entitiesdocumenting 132 entitiesdocumenting 133 entitiesdocumenting 134 entitiesdocumenting 135 entitiesdocumenting 136 entitiesdocumenting 137 entitiesdocumenting 138 entitiesdocumenting 139 entitiesdocumenting 140 entitiesdocumenting 141 entitiesdocumenting 142 entitiesdocumenting 143 entitiesdocumenting 144 entitiesdocumenting 145 entitiesdocumenting 146 entitiesdocumenting 147 entitiesdocumenting 148 entitiesdocumenting 149 entitiesdocumenting 150 entitiesdocumenting 151 entitiesdocumenting 152 entitiesdocumenting 153 entitiesdocumenting 154 entitiesdocumenting 155 entitiesdocumenting 156 entitiesdocumenting 157 entitiesdocumenting 158 entitiesdocumenting 159 entitiesdocumenting 160 entitiesdocumenting 161 entitiesdocumenting 162 entitiesdocumenting 163 entitiesdocumenting 164 entitiesdocumenting 165 entitiesdocumenting 166 entitiesdocumenting 167 entitiesdocumenting 168 entitiesdocumenting 169 entitiesdocumenting 170 entitiesdocumenting 171 entitiesdocumenting 172 entitiesdocumenting 173 entitiesdocumenting 174 entitiesdocumenting 175 entitiesdocumenting 176 entitiesdocumenting 177 entitiesdocumenting 178 entitiesdocumenting 179 entitiesdocumenting 180 entitiesdocumenting 181 entitiesdocumenting 182 entitiesdocumenting 183 entitiesdocumenting 184 entitiesdocumenting 185 entitiesdocumenting 186 entitiesdocumenting 187 entitiesdocumenting 188 entitiesdocumenting 189 entitiesdocumenting 190 entitiesdocumenting 191 entitiesdocumenting 192 entitiesdocumenting 193 entitiesdocumenting 194 entitiesdocumenting 195 entitiesdocumenting 196 entitiesdocumenting 197 entitiesdocumenting 198 entitiesdocumenting 199 entitiesdocumenting 200 entitiesdocumenting 201 entitiesdocumenting 202 entitiesdocumenting 203 entitiesdocumenting 204 entitiesdocumenting 205 entitiesdocumenting 206 entitiesdocumenting 207 entitiesdocumenting 208 entitiesdocumenting 209 entitiesdocumenting 210 entitiesdocumenting 211 entitiesdocumenting 212 entitiesdocumenting 213 entitiesdocumenting 214 entitiesdocumenting 215 entitiesdocumenting 216 entitiesdocumenting 217 entitiesdocumenting 218 entitiesdocumenting 219 entitiesdocumenting 220 entitiesdocumenting 221 entitiesdocumenting 222 entitiesdocumenting 223 entitiesdocumenting 224 entitiesdocumenting 225 entitiesdocumenting 226 entitiesdocumenting 227 entitiesdocumenting 228 entitiesdocumenting 229 entitiesdocumenting 230 entitiesdocumenting 231 entitiesdocumenting 232 entitiesdocumenting 233 entitiesdocumenting 234 entitiesdocumenting 235 entitiesdocumenting 236 entitiesdocumenting 237 entitiesdocumenting 238 entitiesdocumenting 239 entitiesdocumenting 240 entitiesdocumenting 241 entitiesdocumenting 242 entitiesdocumenting 243 entitiesdocumenting 244 entitiesdocumenting 245 entitiesdocumenting 246 entitiesdocumenting 247 entitiesdocumenting 248 entitiesdocumenting 249 entitiesdocumenting 250 entitiesdocumenting 251 entitiesdocumenting 252 entitiesdocumenting 253 entitiesdocumenting 254 entitiesdocumenting 255 entitiesdocumenting 256 entitiesdocumenting 257 entitiesdocumenting 258 entitiesdocumenting 259 entitiesdocumenting 260 entitiesdocumenting 261 entitiesdocumenting 262 entitiesdocumenting 263 entitiesdocumenting 264 entitiesdocumenting 265 entitiesdocumenting 266 entitiesdocumenting 267 entitiesdocumenting 268 entitiesdocumenting 269 entitiesdocumenting 270 entitiesdocumenting 271 entitiesdocumenting 272 entitiesdocumenting 273 entitiesdocumenting 274 entitiesdocumenting 275 entitiesdocumenting 276 entitiesdocumenting 277 entitiesdocumenting 278 entitiesdocumenting 279 entitiesdocumenting 280 entitiesdocumenting 281 entitiesdocumenting 282 entitiesdocumenting 283 entitiesdocumenting 284 entitiesdocumenting 285 entitiesdocumenting 286 entitiesdocumenting 287 entitiesdocumenting 288 entitiesdocumenting 289 entitiesdocumenting 290 entitiesdocumenting 291 entitiesdocumenting 292 entitiesdocumenting 293 entitiesdocumenting 294 entitiesdocumenting 295 entitiesdocumenting 296 entitiesdocumenting 297 entitiesdocumenting 298 entitiesdocumenting 299 entitiesdocumenting 300 entitiesdocumenting 301 entitiesdocumenting 302 entitiesdocumenting 303 entitiesdocumenting 304 entitiesdocumenting 305 entitiesdocumenting 306 entitiesdocumenting 307 entitiesdocumenting 308 entitiesdocumenting 309 entitiesdocumenting 310 entitiesdocumenting 311 entitiesdocumenting 312 entitiesdocumenting 313 entitiesdocumenting 314 entitiesdocumenting 315 entitiesdocumenting 316 entitiesdocumenting 317 entitiesdocumenting 318 entitiesdocumenting 319 entitiesdocumenting 320 entitiesdocumenting 321 entitiesdocumenting 322 entitiesdocumenting 323 entitiesdocumenting 324 entitiesdocumenting 325 entitiesdocumenting 326 entitiesdocumenting 327 entitiesdocumenting 328 entitiesdocumenting 329 entitiesdocumenting 330 entitiesdocumenting 331 entitiesdocumenting 332 entitiesdocumenting 333 entitiesdocumenting 334 entitiesdocumenting 335 entitiesdocumenting 336 entitiesdocumenting 337 entitiesdocumenting 338 entitiesdocumenting 339 entitiesdocumenting 340 entitiesdocumenting 341 entitiesdocumenting 342 entitiesdocumenting 343 entitiesdocumenting 344 entitiesdocumenting 345 entitiesdocumenting 346 entitiesdocumenting 347 entitiesdocumenting 348 entitiesdocumenting 349 entitiesdocumenting 350 entitiesdocumenting 351 entitiesdocumenting 352 entitiesdocumenting 353 entitiesdocumenting 354 entitiesdocumenting 355 entitiesdocumenting 356 entitiesdocumenting 357 entitiesdocumenting 358 entitiesdocumenting 359 entitiesdocumenting 360 entitiesdocumenting 361 entitiesdocumenting 362 entitiesdocumenting 363 entitiesdocumenting 364 entitiesdocumenting 365 entitiesdocumenting 366 entitiesdocumenting 367 entitiesdocumenting 368 entitiesdocumenting 369 entitiesdocumenting 370 entitiesdocumenting 371 entitiesdocumenting 372 entitiesdocumenting 373 entitiesdocumenting 374 entitiesdocumenting 375 entitiesdocumenting 376 entitiesdocumenting 377 entitiesdocumenting 378 entitiesdocumenting 379 entitiesdocumenting 380 entitiesdocumenting 381 entitiesdocumenting 382 entitiesdocumenting 383 entitiesdocumenting 384 entitiesdocumenting 385 entitiesdocumenting 386 entitiesdocumenting 387 entitiesdocumenting 388 entitiesdocumenting 389 entitiesdocumenting 390 entitiesdocumenting 391 entitiesdocumenting 392 entitiesdocumenting 393 entitiesdocumenting 394 entitiesdocumenting 395 entitiesdocumenting 396 entitiesdocumenting 397 entitiesdocumenting 398 entitiesdocumenting 399 entitiesdocumenting 400 entitiesdocumenting 401 entitiesdocumenting 402 entitiesdocumenting 403 entitiesdocumenting 404 entitiesdocumenting 405 entitiesdocumenting 406 entitiesdocumenting 407 entitiesdocumenting 408 entitiesdocumenting 409 entitiesdocumenting 410 entitiesdocumenting 411 entitiesdocumenting 412 entitiesdocumenting 413 entitiesdocumenting 414 entitiesdocumenting 415 entitiesdocumenting 416 entitiesdocumenting 417 entitiesdocumenting 418 entitiesdocumenting 419 entitiesdocumenting 420 entitiesdocumenting 421 entitiesdocumenting 422 entitiesdocumenting 423 entitiesdocumenting 424 entitiesdocumenting 425 entitiesdocumenting 426 entitiesdocumenting 427 entitiesdocumenting 428 entitiesdocumenting 429 entitiesdocumenting 430 entitiesdocumenting 431 entitiesdocumenting 432 entitiesdocumenting 433 entitiesdocumenting 434 entitiesdocumenting 435 entitiesdocumenting 436 entitiesdocumenting 437 entitiesdocumenting 438 entitiesdocumenting 439 entitiesdocumenting 440 entitiesdocumenting 441 entitiesdocumenting 442 entitiesdocumenting 443 entitiesdocumenting 444 entitiesdocumenting 445 entitiesdocumenting 446 entitiesdocumenting 447 entitiesdocumenting 448 entitiesdocumenting 449 entitiesdocumenting 450 entitiesdocumenting 451 entitiesdocumenting 452 entitiesdocumenting 453 entitiesdocumenting 454 entitiesdocumenting 455 entitiesdocumenting 456 entitiesdocumenting 457 entitiesdocumenting 458 entitiesdocumenting 459 entitiesdocumenting 460 entitiesdocumenting 461 entitiesdocumenting 462 entitiesdocumenting 463 entitiesdocumenting 464 entitiesdocumenting 465 entitiesdocumenting 466 entitiesdocumenting 467 entitiesdocumenting 468 entitiesdocumenting 469 entitiesdocumenting 470 entitiesdocumenting 471 entitiesdocumenting 472 entitiesdocumenting 473 entitiesdocumenting 474 entitiesdocumenting 475 entitiesdocumenting 476 entitiesdocumenting 477 entitiesdocumenting 478 entitiesdocumenting 479 entitiesdocumenting 480 entitiesdocumenting 481 entitiesdocumenting 482 entitiesdocumenting 483 entitiesdocumenting 484 entitiesdocumenting 485 entitiesdocumenting 486 entitiesdocumenting 487 entitiesdocumenting 488 entitiesdocumenting 489 entitiesdocumenting 490 entitiesdocumenting 491 entitiesdocumenting 492 entitiesdocumenting 493 entitiesdocumenting 494 entitiesdocumenting 495 entitiesdocumenting 496 entitiesdocumenting 497 entitiesdocumenting 498 entitiesdocumenting 499 entitiesdocumenting 500 entitiesdocumenting 501 entitiesdocumenting 502 entitiesdocumenting 503 entitiesdocumenting 504 entitiesdocumenting 505 entitiesdocumenting 506 entitiesdocumenting 507 entitiesdocumenting 508 entitiesdocumenting 509 entitiesdocumenting 510 entitiesdocumenting 511 entitiesdocumenting 512 entitiesdocumenting 513 entitiesdocumenting 514 entitiesdocumenting 515 entitiesdocumenting 516 entitiesdocumenting 517 entitiesdocumenting 518 entitiesdocumenting 519 entitiesdocumenting 520 entitiesdocumenting 521 entitiesdocumenting 522 entitiesdocumenting 523 entitiesdocumenting 524 entitiesdocumenting 525 entitiesdocumenting 526 entitiesdocumenting 527 entitiesdocumenting 528 entitiesdocumenting 529 entitiesdocumenting 530 entitiesdocumenting 531 entitiesdocumenting 532 entitiesdocumenting 533 entitiesdocumenting 534 entitiesdocumenting 535 entitiesdocumenting 536 entitiesdocumenting 537 entitiesdocumenting 538 entitiesdocumenting 539 entitiesdocumenting 540 entitiesdocumenting 541 entitiesdocumenting 542 entitiesdocumenting 543 entitiesdocumenting 544 entitiesdocumenting 545 entitiesdocumenting 546 entitiesdocumenting 547 entitiesdocumenting 548 entitiesdocumenting 549 entitiesdocumenting 550 entitiesdocumenting 551 entitiesdocumenting 552 entitiesdocumenting 553 entitiesdocumenting 554 entitiesdocumenting 555 entitiesdocumenting 556 entitiesdocumenting 557 entitiesdocumenting 558 entitiesdocumenting 559 entitiesdocumenting 560 entitiesdocumenting 561 entitiesdocumenting 562 entitiesdocumenting 563 entitiesdocumenting 564 entitiesdocumenting 565 entitiesdocumenting 566 entitiesdocumenting 567 entitiesdocumenting 568 entitiesdocumenting 569 entitiesdocumenting 570 entitiesdocumenting 571 entitiesdocumenting 572 entitiesdocumenting 573 entitiesdocumenting 574 entitiesdocumenting 575 entitiesdocumenting 576 entitiesdocumenting 577 entitiesdocumenting 578 entitiesdocumenting 579 entitiesdocumenting 580 entitiesdocumenting 581 entitiesdocumenting 582 entitiesdocumenting 583 entitiesdocumenting 584 entitiesdocumenting 585 entitiesdocumenting 586 entitiesdocumenting 587 entitiesdocumenting 588 entitiesdocumenting 589 entitiesdocumenting 590 entitiesdocumenting 591 entitiesdocumenting 592 entitiesdocumenting 593 entitiesdocumenting 594 entitiesdocumenting 595 entitiesdocumenting 596 entitiesdocumenting 597 entitiesdocumenting 598 entitiesdocumenting 599 entitiesdocumenting 600 entitiesdocumenting 601 entitiesdocumenting 602 entitiesdocumenting 603 entitiesdocumenting 604 entitiesdocumenting 605 entitiesdocumenting 606 entitiesdocumenting 607 entitiesdocumenting 608 entitiesdocumenting 609 entitiesdocumenting 610 entitiesdocumenting 611 entitiesdocumenting 612 entitiesdocumenting 613 entitiesdocumenting 614 entitiesdocumenting 615 entitiesdocumenting 616 entitiesdocumenting 617 entitiesdocumenting 618 entitiesdocumenting 619 entitiesdocumenting 620 entitiesdocumenting 621 entitiesdocumenting 622 entitiesdocumenting 623 entitiesdocumenting 624 entitiesdocumenting 625 entitiesdocumenting 626 entitiesdocumenting 627 entitiesdocumenting 628 entitiesdocumenting 629 entitiesdocumenting 630 entitiesdocumenting 631 entitiesdocumenting 632 entitiesdocumenting 633 entitiesdocumenting 634 entitiesdocumenting 635 entitiesdocumenting 636 entitiesdocumenting 637 entitiesdocumenting 638 entitiesdocumenting 639 entitiesdocumenting 640 entitiesdocumenting 641 entitiesdocumenting 642 entitiesdocumenting 643 entitiesdocumenting 644 entitiesdocumenting 645 entitiesdocumenting 646 entitiesdocumenting 647 entitiesdocumenting 648 entitiesdocumenting 649 entitiesdocumenting 650 entitiesdocumenting 651 entitiesdocumenting 652 entitiesdocumenting 653 entitiesdocumenting 654 entitiesdocumenting 655 entitiesdocumenting 656 entitiesdocumenting 657 entitiesdocumenting 658 entitiesdocumenting 659 entitiesdocumenting 660 entitiesdocumenting 661 entitiesdocumenting 662 entitiesdocumenting 663 entitiesdocumenting 664 entitiesdocumenting 665 entitiesdocumenting 666 entitiesdocumenting 667 entitiesdocumenting 668 entitiesdocumenting 669 entitiesdocumenting 670 entitiesdocumenting 671 entitiesdocumenting 672 entitiesdocumenting 673 entitiesdocumenting 674 entitiesdocumenting 675 entitiesdocumenting 676 entitiesdocumenting 677 entitiesdocumenting 678 entitiesdocumenting 679 entitiesdocumenting 680 entitiesdocumenting 681 entitiesdocumenting 682 entitiesdocumenting 683 entitiesdocumenting 684 entitiesdocumenting 685 entitiesdocumenting 686 entitiesdocumenting 687 entitiesdocumenting 688 entitiesdocumenting 689 entitiesdocumenting 690 entitiesdocumenting 691 entitiesdocumenting 692 entitiesdocumenting 693 entitiesdocumenting 694 entitiesdocumenting 695 entitiesdocumenting 696 entitiesdocumenting 697 entitiesdocumenting 698 entitiesdocumenting 699 entitiesdocumenting 700 entitiesdocumenting 701 entitiesdocumenting 702 entitiesdocumenting 703 entitiesdocumenting 704 entitiesdocumenting 705 entitiesdocumenting 706 entitiesdocumenting 707 entitiesdocumenting 708 entitiesdocumenting 709 entitiesdocumenting 710 entitiesdocumenting 711 entitiesdocumenting 712 entitiesdocumenting 713 entitiesdocumenting 714 entitiesdocumenting 715 entitiesdocumenting 716 entitiesdocumenting 717 entitiesdocumenting 718 entitiesdocumenting 719 entitiesdocumenting 720 entitiesdocumenting 721 entitiesdocumenting 722 entitiesdocumenting 723 entitiesdocumenting 724 entitiesdocumenting 725 entitiesdocumenting 726 entitiesdocumenting 727 entitiesdocumenting 728 entitiesdocumenting 729 entitiesdocumenting 730 entitiesdocumenting 731 entitiesdocumenting 732 entitiesdocumenting 733 entitiesdocumenting 734 entitiesdocumenting 735 entitiesdocumenting 736 entitiesdocumenting 737 entitiesdocumenting 738 entitiesdocumenting 739 entitiesdocumenting 740 entitiesdocumenting 741 entitiesdocumenting 742 entitiesdocumenting 743 entitiesdocumenting 744 entitiesdocumenting 745 entitiesdocumenting 746 entitiesdocumenting 747 entitiesdocumenting 748 entitiesdocumenting 749 entitiesdocumenting 750 entitiesdocumenting 751 entitiesdocumenting 752 entitiesdocumenting 753 entitiesdocumenting 754 entitiesdocumenting 755 entitiesdocumenting 756 entitiesdocumenting 757 entitiesdocumenting 758 entitiesdocumenting 759 entitiesdocumenting 760 entitiesdocumenting 761 entitiesdocumenting 762 entitiesdocumenting 763 entitiesdocumenting 764 entitiesdocumenting 765 entitiesdocumenting 766 entitiesdocumenting 767 entitiesdocumenting 768 entitiesdocumenting 769 entitiesdocumenting 770 entitiesdocumenting 771 entitiesdocumenting 772 entitiesdocumenting 773 entitiesdocumenting 774 entitiesdocumenting 775 entitiesdocumenting 776 entitiesdocumenting 777 entitiesdocumenting 778 entitiesdocumenting 779 entitiesdocumenting 780 entitiesdocumenting 781 entitiesdocumenting 782 entitiesdocumenting 783 entitiesdocumenting 784 entitiesdocumenting 785 entitiesdocumenting 786 entitiesdocumenting 787 entitiesdocumenting 788 entitiesdocumenting 789 entitiesdocumenting 790 entitiesdocumenting 791 entitiesdocumenting 792 entitiesdocumenting 793 entitiesdocumenting 794 entitiesdocumenting 795 entitiesdocumenting 796 entitiesdocumenting 797 entitiesdocumenting 798 entitiesdocumenting 799 entitiesdocumenting 800 entitiesdocumenting 801 entitiesdocumenting 802 entitiesdocumenting 803 entitiesdocumenting 804 entitiesdocumenting 805 entitiesdocumenting 806 entitiesdocumenting 807 entitiesdocumenting 808 entitiesdocumenting 809 entitiesdocumenting 810 entitiesdocumenting 811 entitiesdocumenting 812 entitiesdocumenting 813 entitiesdocumenting 814 entitiesdocumenting 815 entitiesdocumenting 816 entitiesdocumenting 817 entitiesdocumenting 818 entitiesdocumenting 819 entitiesdocumenting 820 entitiesdocumenting 821 entitiesdocumenting 822 entitiesdocumenting 823 entitiesdocumenting 824 entitiesdocumenting 825 entitiesdocumenting 826 entitiesdocumenting 827 entitiesdocumenting 828 entitiesdocumenting 829 entitiesdocumenting 830 entitiesdocumenting 831 entitiesdocumenting 832 entitiesdocumenting 833 entitiesdocumenting 834 entitiesdocumenting 835 entitiesdocumenting 836 entitiesdocumenting 837 entitiesdocumenting 838 entitiesdocumenting 839 entitiesdocumenting 840 entitiesdocumenting 841 entitiesdocumenting 842 entitiesdocumenting 843 entitiesdocumenting 844 entitiesdocumenting 845 entitiesdocumenting 846 entitiesdocumenting 847 entitiesdocumenting 848 entitiesdocumenting 849 entitiesdocumenting 850 entitiesdocumenting 851 entitiesdocumenting 852 entitiesdocumenting 853 entitiesdocumenting 854 entitiesdocumenting 855 entitiesdocumenting 856 entitiesdocumenting 857 entitiesdocumenting 858 entitiesdocumenting 859 entitiesdocumenting 860 entitiesdocumenting 861 entitiesdocumenting 862 entitiesdocumenting 863 entitiesdocumenting 864 entitiesdocumenting 865 entitiesdocumenting 866 entitiesdocumenting 867 entitiesdocumenting 868 entitiesdocumenting 869 entitiesdocumenting 870 entitiesdocumenting 871 entitiesdocumenting 872 entitiesdocumenting 873 entitiesdocumenting 874 entitiesdocumenting 875 entitiesdocumenting 876 entitiesdocumenting 877 entitiesdocumenting 878 entitiesdocumenting 879 entitiesdocumenting 880 entitiesdocumenting 881 entitiesdocumenting 882 entitiesdocumenting 883 entitiesdocumenting 884 entitiesdocumenting 885 entitiesdocumenting 886 entitiesdocumenting 887 entitiesdocumenting 888 entitiesdocumenting 889 entitiesdocumenting 890 entitiesdocumenting 891 entitiesdocumenting 892 entitiesdocumenting 893 entitiesdocumenting 894 entitiesdocumenting 895 entitiesdocumenting 896 entitiesdocumenting 897 entitiesdocumenting 898 entitiesdocumenting 899 entitiesdocumenting 900 entitiesdocumenting 901 entitiesdocumenting 902 entitiesdocumenting 903 entitiesdocumenting 904 entitiesdocumenting 905 entitiesdocumenting 906 entitiesdocumenting 907 entitiesdocumenting 908 entitiesdocumenting 909 entitiesdocumenting 910 entitiesdocumenting 911 entitiesdocumenting 912 entitiesdocumenting 913 entitiesdocumenting 914 entitiesdocumenting 915 entitiesdocumenting 916 entitiesdocumenting 917 entitiesdocumenting 918 entitiesdocumenting 919 entitiesdocumenting 920 entitiesdocumenting 921 entitiesdocumenting 922 entitiesdocumenting 923 entitiesdocumenting 924 entitiesdocumenting 925 entitiesdocumenting 926 entitiesdocumenting 927 entitiesdocumenting 928 entitiesdocumenting 929 entitiesdocumenting 930 entitiesdocumenting 931 entitiesdocumenting 932 entitiesdocumenting 933 entitiesdocumenting 934 entitiesdocumenting 935 entitiesdocumenting 936 entitiesdocumenting 937 entitiesdocumenting 938 entitiesdocumenting 939 entitiesdocumenting 940 entitiesdocumenting 941 entitiesdocumenting 942 entitiesdocumenting 943 entitiesdocumenting 944 entitiesdocumenting 945 entitiesdocumenting 946 entitiesdocumenting 947 entitiesdocumenting 948 entitiesdocumenting 949 entitiesdocumenting 950 entitiesdocumenting 951 entitiesdocumenting 952 entitiesdocumenting 953 entitiesdocumenting 954 entitiesdocumenting 955 entitiesdocumenting 956 entitiesdocumenting 957 entitiesdocumenting 958 entitiesdocumenting 959 entitiesdocumenting 960 entitiesdocumenting 961 entitiesdocumenting 962 entitiesdocumenting 963 entitiesdocumenting 964 entitiesdocumenting 965 entitiesdocumenting 966 entitiesdocumenting 967 entitiesdocumenting 968 entitiesdocumenting 969 entitiesdocumenting 970 entitiesdocumenting 971 entitiesdocumenting 972 entitiesdocumenting 973 entitiesdocumenting 974 entitiesdocumenting 975 entitiesdocumenting 976 entitiesdocumenting 977 entitiesdocumenting 978 entitiesdocumenting 979 entitiesdocumenting 980 entitiesdocumenting 981 entitiesdocumenting 982 entitiesdocumenting 983 entitiesdocumenting 984 entitiesdocumenting 985 entitiesdocumenting 986 entitiesdocumenting 987 entitiesdocumenting 988 entitiesdocumenting 989 entitiesdocumenting 990 entitiesdocumenting 991 entitiesdocumenting 992 entitiesdocumenting 993 entitiesdocumenting 994 entitiesdocumenting 995 entitiesdocumenting 996 entitiesdocumenting 997 entitiesdocumenting 998 entitiesdocumenting 999 entitiesdocumenting 1000 entitiesdocumenting 1001 entitiesdocumenting 1002 entitiesdocumenting 1003 entitiesdocumenting 1004 entitiesdocumenting 1005 entitiesdocumenting 1006 entitiesdocumenting 1007 entitiesdocumenting 1008 entitiesdocumenting 1009 entitiesdocumenting 1010 entitiesdocumenting 1011 entitiesdocumenting 1012 entitiesdocumenting 1013 entitiesdocumenting 1014 entitiesdocumenting 1015 entitiesdocumenting 1016 entitiesdocumenting 1017 entitiesdocumenting 1018 entitiesdocumenting 1019 entitiesdocumenting 1020 entitiesdocumenting 1021 entitiesdocumenting 1022 entitiesdocumenting 1023 entitiesdocumenting 1024 entitiesdocumenting 1025 entitiesdocumenting 1026 entitiesdocumenting 1027 entitiesdocumenting 1028 entitiesdocumenting 1029 entitiesdocumenting 1030 entitiesdocumenting 1031 entitiesdocumenting 1032 entitiesdocumenting 1033 entitiesdocumenting 1034 entitiesdocumenting 1035 entitiesdocumenting 1036 entitiesdocumenting 1037 entitiesdocumenting 1038 entitiesdocumenting 1039 entitiesdocumenting 1040 entitiesdocumenting 1041 entitiesdocumenting 1042 entitiesdocumenting 1043 entitiesdocumenting 1044 entitiesdocumenting 1045 entitiesdocumenting 1046 entitiesdocumenting 1047 entitiesdocumenting 1048 entitiesdocumenting 1049 entitiesdocumenting 1050 entitiesdocumenting 1051 entitiesdocumenting 1052 entitiesdocumenting 1053 entitiesdocumenting 1054 entitiesdocumenting 1055 entitiesdocumenting 1056 entitiesdocumenting 1057 entitiesdocumenting 1058 entitiesdocumenting 1059 entitiesdocumenting 1060 entitiesdocumenting 1061 entitiesdocumenting 1062 entitiesdocumenting 1063 entitiesdocumenting 1064 entitiesdocumenting 1065 entitiesdocumenting 1066 entitiesdocumenting 1067 entitiesdocumenting 1068 entitiesdocumenting 1069 entitiesdocumenting 1070 entitiesdocumenting 1071 entitiesdocumenting 1072 entitiesdocumenting 1073 entitiesdocumenting 1074 entitiesdocumenting 1075 entitiesdocumenting 1076 entitiesdocumenting 1077 entitiesdocumenting 1078 entitiesdocumenting 1079 entitiesdocumenting 1080 entitiesdocumenting 1081 entitiesdocumenting 1082 entitiesdocumenting 1083 entitiesdocumenting 1084 entitiesdocumenting 1085 entitiesdocumenting 1086 entitiesdocumenting 1087 entitiesdocumenting 1088 entitiesdocumenting 1089 entitiesdocumenting 1090 entitiesdocumenting 1091 entitiesdocumenting 1092 entitiesdocumenting 1093 entitiesdocumenting 1094 entitiesdocumenting 1095 entitiesdocumenting 1096 entitiesdocumenting 1097 entitiesdocumenting 1098 entitiesdocumenting 1099 entitiesdocumenting 1100 entitiesdocumenting 1101 entitiesdocumenting 1102 entitiesdocumenting 1103 entitiesdocumenting 1104 entitiesdocumenting 1105 entitiesdocumenting 1106 entitiesdocumenting 1107 entitiesdocumenting 1108 entitiesdocumenting 1109 entitiesdocumenting 1110 entitiesdocumenting 1111 entitiesdocumenting 1112 entitiesdocumenting 1113 entitiesdocumenting 1114 entitiesdocumenting 1115 entitiesdocumenting 1116 entitiesdocumenting 1117 entitiesdocumenting 1118 entitiesdocumenting 1119 entitiesdocumenting 1120 entitiesdocumenting 1121 entitiesdocumenting 1122 entitiesdocumenting 1123 entitiesdocumenting 1124 entitiesdocumenting 1125 entitiesdocumenting 1126 entitiesdocumenting 1127 entitiesdocumenting 1128 entitiesdocumenting 1129 entitiesdocumenting 1130 entitiesdocumenting 1131 entitiesdocumenting 1132 entitiesdocumenting 1133 entitiesdocumenting 1134 entitiesdocumenting 1135 entitiesdocumenting 1136 entitiesdocumenting 1137 entitiesdocumenting 1138 entitiesdocumenting 1139 entitiesdocumenting 1140 entitiesdocumenting 1141 entitiesdocumenting 1142 entitiesdocumenting 1143 entitiesdocumenting 1144 entitiesdocumenting 1145 entitiesdocumenting 1146 entitiesdocumenting 1147 entitiesdocumenting 1148 entitiesdocumenting 1149 entitiesdocumenting 1150 entitiesdocumenting 1151 entitiesdocumenting 1152 entitiesdocumenting 1153 entitiesdocumenting 1154 entitiesdocumenting 1155 entitiesdocumenting 1156 entitiesdocumenting 1157 entitiesdocumenting 1158 entitiesdocumenting 1159 entitiesdocumenting 1160 entitiesdocumenting 1161 entitiesdocumenting 1162 entitiesdocumenting 1163 entitiesdocumenting 1164 entitiesdocumenting 1165 entitiesdocumenting 1166 entitiesdocumenting 1167 entitiesdocumenting 1168 entitiesdocumenting 1169 entitiesdocumenting 1170 entitiesdocumenting 1171 entitiesdocumenting 1172 entitiesdocumenting 1173 entitiesdocumenting 1174 entitiesdocumenting 1175 entitiesdocumenting 1176 entitiesdocumenting 1177 entitiesdocumenting 1178 entitiesdocumenting 1179 entitiesdocumenting 1180 entitiesdocumenting 1181 entitiesdocumenting 1182 entitiesdocumenting 1183 entitiesdocumenting 1184 entitiesdocumenting 1185 entitiesdocumenting 1186 entitiesdocumenting 1187 entitiesdocumenting 1188 entitiesdocumenting 1189 entitiesdocumenting 1190 entitiesdocumenting 1191 entitiesdocumenting 1192 entitiesdocumenting 1193 entitiesdocumenting 1194 entitiesdocumenting 1195 entitiesdocumenting 1196 entitiesdocumenting 1197 entitiesdocumenting 1198 entitiesdocumenting 1199 entitiesdocumenting 1200 entitiesdocumenting 1201 entities
+
+[x] Ok..going to run the whitebox tests
+
+
+==> 9-http-measure.php
+
+==> 10-http-stresstest.php
+#!/usr/bin/php 
+preparing BOGUSEVENT-REST request
+sending out 100 request(s)..........
+total reqs : 100 request
+total time : 3.6116390228271 seconds
+average request  : 0.036116390228271 seconds
+average wanted   : < 0.06 seconds (NICE!)
+
+==> 100-class.sutra.php
+
+==> 110-lib.activerecord.php
+
+==> 500-class.versioning.php
+
+==> 510-class.inputEvent.v1.0.php
+testing event 'TRANSACTION_FINALIZED'
+testing event 'YOURCOMPANY_TRANSACTION_CONFIRMATION'
+testing event 'BOGUSEVENT'
+testing event 'WEBSITE_LOG'
+
+==> 520-lib.phpmailer.php
+Testing PHPMailer in normal local sendmail-mode
+connecting (max 5 times) to POP3 server to receive the sent mail...
+..nothing..lets retry after 3 secs
+I found the sent mail in the inbox! \o/ \o/ \o/
+
+==> 530-database.yourwebsiteMail.manager.php
+email added
+
+email successfully sent
+connecting (max 5 times) to POP3 server to receive the sent mail...
+..nothing..lets retry after 3 secs
+I found the sent mail in the inbox! \o/ \o/ \o/
+
+==> 540-class.yourwebsiteMessage.manager.php
+Testing event 'BOGUSEVENT' & output process & message handling...
+[SUCCESS] Testing of event processing & message handling was successfull with no errors!
+
+==> 666-YOURCOMPANY_TRANSACTION_CONFIRMATION_test_issue732.php
+searching for BCOcomponent confirmed: searching for BCOcomponent confirmed: test successfull
+
+==> 1000-yourwebsiteserver.bash
+starting yourwebsite server
+nice..got pid (19947)
+stopping yourwebsite server
+
+==> 1001-asynchronphp.bash
+stopping yourwebsite server
+testing asynchronphp package
+[ tests/connects ]
+[x] sending out 50 requests
+[ tests/sendjson ]
+[ sending json request 'connect.json' ]
+{ "foo": "bar" }
+[ sending json request 'corrupt.json' ]
+{ ,sdf$: }},
+[ tests/syntaxcheck ]
+testing './asynchronphp/fifo.php'testing './asynchronphp/indentJSON.php'testing './asynchronphp/client.php'testing './asynchronphp/cli.php'testing './asynchronphp/server.php'testing './asynchronphp/util.php'testing './autoload.php'testing './ajserver.php'
+
+==> 5000-database.yourwebsiteMessage.r1.php
+
+==> 10010-yourwebsiteserver-start.bash
+stopping yourwebsite server
+starting yourwebsite server
+nice..got pid (20364)
+
+==> 10100-lib.asynchronphp.php
+succesfully send garbage data to server
+
+==> 10105-lib.yourwebsiteio.php
+adding fake action for fake user to the database
+
+*FIXME* nreqs set to 20 because of memoryleak (see issue546) 
+== sending out 20 requests of event 'TRANSACTION_FINALIZED'..
+   total reqs : 20 request
+   total time : 0.10436201095581 seconds
+   average request  : 0.0052181005477905 seconds
+   average wanted   : < 0.05 seconds (NICE!)
+
+*FIXME* nreqs set to 20 because of memoryleak (see issue546) 
+== sending out 20 requests of event 'YOURCOMPANY_TRANSACTION_CONFIRMATION'..
+   total reqs : 20 request
+   total time : 0.86116099357605 seconds
+   average request  : 0.043058049678802 seconds
+   average wanted   : < 0.05 seconds (NICE!)
+
+*FIXME* nreqs set to 20 because of memoryleak (see issue546) 
+== sending out 20 requests of event 'BOGUSEVENT'..
+   total reqs : 20 request
+   total time : 0.61946797370911 seconds
+   average request  : 0.030973398685455 seconds
+   average wanted   : < 0.05 seconds (NICE!)
+
+*FIXME* nreqs set to 20 because of memoryleak (see issue546) 
+== sending out 20 requests of event 'WEBSITE_LOG'..
+   total reqs : 20 request
+   total time : 0.59938597679138 seconds
+   average request  : 0.029969298839569 seconds
+   average wanted   : < 0.05 seconds (NICE!)
+
+==> 10205-memtest.php
+{
+  "date":"2013-06-28 15:06:51",
+  "exectime":3.1783289909363,
+  "data":{
+    "returncode":0,
+    "msg":"",
+    "data":{
+      "helloWorld":{
+        "msg":"outputComponent helloWorld was succesfull",
+        "errMsg":"",
+        "returncode":0
+      }
+    }
+  },
+  "status":"OK"
+}
+Used memory:1483.90625Kbyte(s)
+{
+  "date":"2013-06-28 15:06:52",
+  "exectime":3.2805471420288,
+  "data":{
+    "returncode":0,
+    "msg":"",
+    "data":{
+      "helloWorld":{
+        "msg":"outputComponent helloWorld was succesfull",
+        "errMsg":"",
+        "returncode":0
+      }
+    }
+  },
+  "status":"OK"
+}
+Used memory:1480.609375Kbyte(s)
+{
+  "date":"2013-06-28 15:06:52",
+  "exectime":3.3838241100311,
+  "data":{
+    "returncode":0,
+    "msg":"",
+    "data":{
+      "helloWorld":{
+        "msg":"outputComponent helloWorld was succesfull",
+        "errMsg":"",
+        "returncode":0
+      }
+    }
+  },
+  "status":"OK"
+}
+Used memory:1480.609375Kbyte(s)
+{
+  "date":"2013-06-28 15:06:52",
+  "exectime":3.4962010383606,
+  "data":{
+    "returncode":0,
+    "msg":"",
+    "data":{
+      "helloWorld":{
+        "msg":"outputComponent helloWorld was succesfull",
+        "errMsg":"",
+        "returncode":0
+      }
+    }
+  },
+  "status":"OK"
+}
+Used memory:1480.609375Kbyte(s)
+{
+  "date":"2013-06-28 15:06:52",
+  "exectime":3.603698015213,
+  "data":{
+    "returncode":0,
+    "msg":"",
+    "data":{
+      "helloWorld":{
+        "msg":"outputComponent helloWorld was succesfull",
+        "errMsg":"",
+        "returncode":0
+      }
+    }
+  },
+  "status":"OK"
+}
+Used memory:1480.609375Kbyte(s)
+{
+  "date":"2013-06-28 15:06:52",
+  "exectime":3.7085320949554,
+  "data":{
+    "returncode":0,
+    "msg":"",
+    "data":{
+      "helloWorld":{
+        "msg":"outputComponent helloWorld was succesfull",
+        "errMsg":"",
+        "returncode":0
+      }
+    }
+  },
+  "status":"OK"
+}
+Used memory:1480.609375Kbyte(s)
+{
+  "date":"2013-06-28 15:06:52",
+  "exectime":3.8202731609344,
+  "data":{
+    "returncode":0,
+    "msg":"",
+    "data":{
+      "helloWorld":{
+        "msg":"outputComponent helloWorld was succesfull",
+        "errMsg":"",
+        "returncode":0
+      }
+    }
+  },
+  "status":"OK"
+}
+Used memory:1480.609375Kbyte(s)
+{
+  "date":"2013-06-28 15:06:52",
+  "exectime":3.9241740703583,
+  "data":{
+    "returncode":0,
+    "msg":"",
+    "data":{
+      "helloWorld":{
+        "msg":"outputComponent helloWorld was succesfull",
+        "errMsg":"",
+        "returncode":0
+      }
+    }
+  },
+  "status":"OK"
+}
+Used memory:1480.609375Kbyte(s)
+{
+  "date":"2013-06-28 15:06:52",
+  "exectime":4.0268490314484,
+  "data":{
+    "returncode":0,
+    "msg":"",
+    "data":{
+      "helloWorld":{
+        "msg":"outputComponent helloWorld was succesfull",
+        "errMsg":"",
+        "returncode":0
+      }
+    }
+  },
+  "status":"OK"
+}
+Used memory:1480.609375Kbyte(s)
+{
+  "date":"2013-06-28 15:06:52",
+  "exectime":4.1296689510345,
+  "data":{
+    "returncode":0,
+    "msg":"",
+    "data":{
+      "helloWorld":{
+        "msg":"outputComponent helloWorld was succesfull",
+        "errMsg":"",
+        "returncode":0
+      }
+    }
+  },
+  "status":"OK"
+}
+Used memory:1480.609375Kbyte(s)
+Memtest ran successfully without reaching maxmem!
+Execution time(in secs): 1.0551600456238
+
+==> 10505-lib.yourwebsiteio.customactions.php
+adding fake action for fake user to the database
+
+NICE!..2 similar actions in db (global+custom), and yet yourwebsiteio returns only 1
+
+==> 19999-yourwebsiteserver-stop.bash
+stopping yourwebsite server
+
+==> 30000-someActionFinalizedComponent-form-editaction.php
+inserted action to db
+[event: TRANSACTION_FINALIZED plugin: notifyFinalized] plugin initialized
+[event: TRANSACTION_FINALIZED plugin: notifyFinalized] tested with empty data
+[event: TRANSACTION_FINALIZED plugin: notifyFinalized] tested with TEST data
+[event: TRANSACTION_FINALIZED plugin: notifyFinalized] removed test datas
+[event: TRANSACTION_FINALIZED plugin: notifyFinalized] TEST SUCCESSFULL
+
+==> 40000-toJsonFile.php
+inserted action with id #999999 to db
+[event: WEBSITE_LOG | plugin: toJsonFile] plugin initialized
+[event: WEBSITE_LOG | plugin: toJsonFile] tested with empty data
+[event: WEBSITE_LOG | plugin: toJsonFile] tested with TEST data
+[event: WEBSITE_LOG | plugin: toJsonFile] simulated process function successfully, created test file
+[event: WEBSITE_LOG | plugin: toJsonFile] removed the created test file, and removed the previously created record from db
+[event: WEBSITE_LOG | plugin: toJsonFile] TEST SUCCESSFULL
+
+==> 50000-syntaxcheck.bash
+DISABLED FOR NOW
+
+==> 66666-cleanup.php
+[cleanup testing] added 5000 records to db
+[cleanup testing] executed 'cleanup 1000'
+[cleanup testing] checked number of records in db and 1000 left
+[cleanup testing] removed the rest from the database
+[cleanup testing] >>>>> TEST SUCCESSFULL, execution time (sec): 1.457239151001 <<<<<
+
+[!] warnings: 0
+[!] errors  : 0
+[!] software is feeling groovy! :)
+, and last test-output ../../data/test.txt
+
+[x] Ok..going to run the graybox tests
+
+
+==> 10-example-advanced
+[x] shared vars are: http://www.google.com, ., , PASSWORD, ../../data/test.cookie.txt, ../../data/test.cookie.jar.txt, ../../data/test.txt, your@email.com, 
+
+(this test is out of order for now)
+
+==> 20-example-simple
+PING www.google.com (173.194.34.179) 56(84) bytes of data.
+64 bytes from lhr14s22-in-f19.1e100.net (173.194.34.179): icmp_req=1 ttl=54 time=1.84 ms
+
+--- www.google.com ping statistics ---
+1 packets transmitted, 1 received, 0% packet loss, time 0ms
+rtt min/avg/max/mdev = 1.847/1.847/1.847/0.000 ms
+
+==> 25-http-accessible
+requesting url: http://yourwebsite.yourcompany.com
+
+==> 30-test-REST-v1.0-jsondata.bash
+requesting 100 BOGUSEVENT asynchronous requests (BOGUSEVENT MAYHEM!)
+..http://yourwebsite.yourcompany.com/rest?jsondata={"event":"BOGUSEVENT","date":"2013-06-28 15:21:57","version":"1.0","data":{"senderid":"YourCompanYourWebsite","aint":1,"astring":"Lorem ipsum","abool":true,"adate":"2012-01-01 12:01:01","afloat":1.2,"aobject":{"oint":1},"aarray":{"aint":1,"astring":"Lorem ipsum","aobject":{"aint":1}},"userids":[1,2,3,4]},"id":"c31861961db7ff5f47385fb0d824c938","testmode":true}
+(waiting)(waiting)
+
+==> 510-cli-action
+added
+
+id: #1000009
+enabled
+disabled
+deleted
+
+[!] warnings: 0
+[!] errors  : 0
+[!] software is feeling groovy! :)
+, and last test-output ../../data/deploylog.txt
+
+    ┏━ ┏━┛┏━┃┃  ┏━┃┃ ┃┏┏ ┏━┛┏━ ━┏┛  ┏━┛┏━┃┏┏ ┏━┃┃  ┏━┛━┏┛┏━┛┏━ 
+    ┃ ┃┏━┛┏━┛┃  ┃ ┃━┏┛┃┃┃┏━┛┃ ┃ ┃   ┃  ┃ ┃┃┃┃┏━┛┃  ┏━┛ ┃ ┏━┛┃ ┃
+    ━━ ━━┛┛  ━━┛━━┛ ┛ ┛┛┛━━┛┛ ┛ ┛   ━━┛━━┛┛┛┛┛  ━━┛━━┛ ┛ ━━┛━━ 
+
+
+[x] starting yourwebsiteserver..
+[x] importing cronjobs
+[x] sql colums were added 
+[x] your website  is ready @ http://yourwebsite.yourcompany.com
+[x] documentation is ready @ http://yourwebsite.yourcompany.com/doc
+[x] replay fake testlog:  curl 'http://yourwebsite.yourcompany.com/new/src/data/test.txt' | less
+[x] replay testlog:       curl 'http://yourwebsite.yourcompany.com/data/test.txt' | less
+[x] replay deploylog:     curl 'http://yourwebsite.yourcompany.com/data/deploy.txt' | less
+[x] backupfile of previous version @ /tmp/yourwebsite-backup-.zip

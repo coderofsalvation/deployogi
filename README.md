@@ -43,7 +43,7 @@ so if you like unix, you'll like this as well.
 How?
 ====
 Simply by pushing to a remote git-repository.
-Only thing to do once is writing a config-file, and make sure you let git use deployogi when [you push the repo with this git-hook](https://raw.github.com/coderofsalvation/deployogi/master/example/post-receive). 
+Only thing to do once is writing a config-file, and make sure git calls deployogi when [you push to a sharedrepo with this git-hook](https://raw.github.com/coderofsalvation/deployogi/master/example/post-receive). 
 Thats it!
 
 Further extension can be done using deployogi hook-scripts (n a similar fashion as git hooks), because deployogi automatically installs this folder to your githooks-dir:

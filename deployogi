@@ -84,10 +84,11 @@ trapped=1;
 trap "_onexit" EXIT SIGINT SIGTERM ERR 0 1
  
 _onexit(){
-  echo "exitging $trapped" 
-  if [[ ${#TRIGGERDIR} > 0  ]]; then 
-    trigger="$TRIGGERDIR/deployi.d/70-on.exit"
-    [[ -f "$trigger" ]] && source "$trigger"           # fire 'deployogi.d/on.exit' if any
+  trigger="$TRIGGERDIR/deployogi.d/70-on.exit"
+  if [[ {$#TRIGGERDIR} != 0 ]]; then 
+    echo $TRIGGERDIR
+    cd "$TRIGGERDIR"
+    _deploytrigger "exiting deployment.." "70-on.exit" 
   fi 
 }
 
@@ -101,9 +102,9 @@ _checkrequirements(){
 #                       <-- starts deployment of webapplication (usually called by git hook)
 deploy(){
   :>"$DEPLOYLOGFILE" && chmod 777 "$DEPLOYLOGFILE" # empty and initialize logfile
+  [[ ! -d "deployogi.d" ]] && echo "deployogi.d directory not found in $dir, please use init or think things over" && exit 1
+  TRIGGERDIR="$(pwd)/deployogi.d" 
   ( 
-    [[ ! -d "deployogi.d" ]] && echo "deployogi.d directory not found in $dir, please use init or think things over" && exit 1
-    TRIGGERDIR=""$(pwd)"/deployogi.d" 
     _header "deployogi"; printf "$VERSIONFANCY\n\n"
     _checkconfig 
     _deploytrigger "beginning deployment" "10-on.begin" || _haltdeploy
@@ -131,7 +132,7 @@ deploy(){
 }
 
 _haltdeploy(){
-  printf "hoi" #\n$C_RED[x] something went wrong..halting deployment $C_RESET"
+  echo "[x] something went wrong..halting deployment" 
   exit 1
 }
 

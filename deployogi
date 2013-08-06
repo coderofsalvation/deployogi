@@ -40,7 +40,7 @@ REALPATH="$( dirname "$(readlink -f "$0")" )"
 TRIGGERDIR=""
 UID="$(date +"%Y%m%d%H%M")"
 CURRENTDIRLOGFILE="/tmp/deployogi.$UID.currentdir"
-MICROLOGFILE="/tmp/deployogi.$UID.log"
+MICROLOGFILE="/tmp/deployogi.$UID.log"; :>"$MICROLOGFILE" # initialize logfile
 DEPLOY_LOG="deploystart"
 TRIGGERS=(10-on.begin 20-on.backup 30-on.merge 40-on.configure 50-on.generatedocs 60-on.test 70-on.exit )
 REQUIREMENTS=(git)
@@ -94,7 +94,7 @@ _onexit(){
   if [[ {$#TRIGGERDIR} != 0 ]]; then 
     export MICROLOGFILE;  # lets give the subshells access to these variables
     export DEPLOYLOGFILE; #
-    export DEPLOYHALT;    #
+    [[ $DEPLOYHALT ]] && export DEPLOYHALT; 
     (
       cd "$TRIGGERDIR"
       _deploytrigger "exiting deployment.." "70-on.exit" || return 1 
@@ -150,6 +150,7 @@ deploy(){
     _microlog "done..deployment went fine \o/!"
   ) | while read line; do echo -e "$line"; echo -e "$line" >> "$DEPLOYLOGFILE"; done # tee doesnt support colors and create bufferproblems
   sed -i -r "s:\x1B\[[0-9;]*[mK]::g" "$DEPLOYLOGFILE" # remove colors from deploylogfile
+  return 0
 }
 
 _setcurrentdir(){

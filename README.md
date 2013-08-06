@@ -60,6 +60,28 @@ Further extension can be done using deployogi hook-scripts (n a similar fashion 
 
 > NOTE: these files represent triggers which are described in the sequencediagram below.
 
+A typical, simplified setup for multiple websitedeployment would look like this (Lets suppose 2 Zendwebsites) :
+
+                 /var/www/.deployogi.shared/Zend.on.exit <---------------------------------,--,
+                 /var/www/yourwebsite1    <--- merge -------------,                        |  |
+                                                                  |                        |  |
+    git push --> /gitrepos/yourwebsite1.git/hooks/post-receive ---'-,                      |  |
+                                                                    |                      |  |
+                                            hooks/deployogi.d/ (run hooks)                 |  |
+                                                                    |                      |  |
+                                            hooks/deployogi.d/70-on.exit  --- source    ---'  |
+                                                                                              |
+                 /var/www/yourwebsite1    <--- merge ------------,                            |
+                                                                 |                            |
+    git push --> /gitrepos/yourwebsite2.git/hooks/post-receive ----,                          |
+                                                                   |                          |
+                                            hooks/deployogi.d/ (run hooks)                    |
+                                                                   |                          |
+                                            hooks/deployogi.d/70-on.exit  --- symboliclink ---'
+
+The idea is that the deploymentmodel is the same, however each website can have its customized deployment, and
+still benefit from shared code (using sourcing or symbolic links, see this [WIKI article](https://github.com/coderofsalvation/deployogi/wiki/hint:-shared-scripts).
+
 Are git hooks not enough?
 =========================
 No, if you dive into this matter you'll soon find out there will be many obstacles because [GIT is not a deploymenttool](http://gitolite.com/the-list-and-irc/deploy.html) 

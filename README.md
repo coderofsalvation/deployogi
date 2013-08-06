@@ -88,6 +88,11 @@ Are git hooks not enough?
 =========================
 No, if you dive into this matter you'll soon find out there will be many obstacles because [GIT is not a deploymenttool](http://gitolite.com/the-list-and-irc/deploy.html) 
 
+My webapplication has no tests!
+===============================
+No worries, Deployogi works well with [Testosteron](https://github.com/coderofsalvation/testosteron), a modular testingtool which works with all programminglanguages.
+Just write some testosteron tests and call `'./test all white'` in deployogi's 'deployogi.d/60-on.test'-hook.
+
 Requirements
 ============
 

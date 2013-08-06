@@ -79,6 +79,8 @@ A typical, simplified setup for multiple websitedeployment would look like this 
                                                                    |                          |
                                             hooks/deployogi.d/70-on.exit  --- symboliclink ---'
 
+> `NOTE: dont worry, deployogi will not merge directly, you can tweak that process by merging to a clone of your website to see if things go fine`
+
 The idea is that the deploymentmodel is the same, however each website can have its customized deployment, and
 still benefit from shared code (using sourcing or symbolic links, see this [WIKI article](https://github.com/coderofsalvation/deployogi/wiki/hint:-shared-scripts).
 

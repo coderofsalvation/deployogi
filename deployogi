@@ -302,7 +302,7 @@ init(){
   _print "now cd to $dir and run './deployogi deploy' from there"
 }
 
-#                       <-- manual of deployogi (also works by just passing --manual)
+#                        <-- manual of deployogi (also works by just passing --manual)
 help(){
   local tempfile="/tmp/foo.1"
   hash pod2man 2>&-

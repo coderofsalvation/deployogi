@@ -90,8 +90,8 @@ WEBDOMAIN="your.domain.com"                               # domain where the web
 # clone settings
 
 # let deployogi try to deploy to a clone before merging/upgrading the real version, (note: your webapp should support running from outside the webroot)
-#PROJECTDIR_CLONE="/var/www/webapps/yourwebbapp/clone"      # where to deploy? (the location where your webapplication can be visited)
-#CLONE_ROOTURL="/new"                                       # where can the clone be accessed thru the web?
+#CLONE_ROOTURL="clone/src"                                 # where can the clone be accessed thru the web?                                                    
+#PROJECTDIR_CLONE="$PROJECTDIR/src/clone"                  # where to deploy the clone? (first a clone is deployed to see if the tests work at all)
 
 # SQL settings
 

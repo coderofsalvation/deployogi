@@ -38,11 +38,11 @@ VERSION="0.1"
 VERSIONFANCY="$C_WHITE v$VERSION$C_GREEN @ https://github.com/coderofsalvation/deployogi$C_RESET"
 REALPATH="$( dirname "$(readlink -f "$0")" )"
 TRIGGERDIR=""
-UID="$(date +"%Y%m%d%H%M")"
-CURRENTDIRLOGFILE="/tmp/deployogi.$UID.currentdir"
-MICROLOGFILE="/tmp/deployogi.$UID.log"; :>"$MICROLOGFILE" # initialize logfile
+UNIQUE="$(date +"%Y%m%d%H%M")"
+CURRENTDIRLOGFILE="/tmp/deployogi.$UNIQUE.currentdir"
+MICROLOGFILE="/tmp/deployogi.$UNIQUE.log"; :>"$MICROLOGFILE" # initialize logfile
 DEPLOY_LOG="deploystart"
-TRIGGERS=(10-on.begin 20-on.backup 30-on.merge 40-on.configure 50-on.generatedocs 60-on.test 70-on.exit )
+TRIGGERS=(10-on.begin 20-on.backup 40-on.configure 50-on.generatedocs 60-on.test 70-on.exit )
 REQUIREMENTS=(git)
 USE_SQL=1
 USE_CLONE=1
@@ -50,6 +50,31 @@ IS_CLONE=0
 
 # template files (folded in vim for convenience)
 TPL_TRIGGER="#!/bin/bash\n\n# nothing happening here..yet\n\n# [[ \$IS_CLONE ]] && echo '$0 applied on clone!'\n# [[ \$DEPLOYHALT ]] && echo 'deployment was halted, handy for on.exit-hook';\n\n\n# return > 0 if something went wrong and deployment should stop\nreturn 0"
+TPL_MERGE='#!/bin/bash
+
+### NOTES ###
+# 
+# this is just a possible workflow for updating code.
+#
+# For more tips look here: http://longair.net/blog/2009/04/16/git-fetch-and-merge/
+# Small cheatsheet:
+#
+#   git fetch origin                       # pull = fetch + merge 
+#   git reset --hard                       # this will create merge-refusals as soon as somebody does local changes
+#   git clean  -d  -fx ""                  # this will delete local changes
+#
+# [[ \$IS_CLONE ]] && echo "$0 applied on clone!"\n
+
+### update to latest source
+
+unset GIT_DIR
+git stash || return 1                    # instead stash local changes (temporary save to gitstack), no loss of local changes, and no git halts
+git pull origin "$GITBRANCH" || return 1 # since we are currently on branch "$GITBRANCH", this will fetch the latest code from shared repo 
+                                         # and merge it into the workingtree as well
+
+# return > 0 if something went wrong and deployment should stop
+return 0
+'
 TPL_CONFIG='#!/bin/bash
 
 # mandatory
@@ -87,6 +112,20 @@ trapped=1;
 _print(){
   printf "$C_GREEN[deployogi]$C_RESET $1\n"
 }
+
+# Copyright 2012 Yu-Jie Lin
+# MIT License
+# Log Call Stack
+_showstack() {
+  local i=0
+  local FRAMES=${#BASH_LINENO[@]}
+  # FRAMES-2 skips main, the last one in arrays
+  for ((i=FRAMES-2; i>=0; i--)); do
+    echo '  File' \"${BASH_SOURCE[i+1]}\", line ${BASH_LINENO[i]}, in ${FUNCNAME[i+1]}
+    # Grab the source code of the line
+    sed -n "${BASH_LINENO[i]}{s/^/    /;p}" "${BASH_SOURCE[i+1]}"
+  done
+}
  
 _onexit(){
   trap - 1 2 3 15 # clear trap so we are not triggered twice
@@ -94,10 +133,11 @@ _onexit(){
   if [[ {$#TRIGGERDIR} != 0 ]]; then 
     export MICROLOGFILE;  # lets give the subshells access to these variables
     export DEPLOYLOGFILE; #
+    export GITBRANCH;     #
     [[ $DEPLOYHALT ]] && export DEPLOYHALT; 
     (
       cd "$TRIGGERDIR"
-      _deploytrigger "exiting deployment.." "70-on.exit" || return 1 
+      _deploytrigger "exiting deployment.." "70-on.exit" 
     ) | while read line; do echo -e "$line"; echo -e "$line" >> "$DEPLOYLOGFILE"; done # tee doesnt support colors and create bufferproblems
   fi 
   echo "[x] summary: $(cat "$MICROLOGFILE")" >> "$DEPLOYLOGFILE"
@@ -118,7 +158,7 @@ _microlog(){
 
 #                       <-- starts deployment of webapplication (usually called by git hook)
 deploy(){
-  trap "_onexit" EXIT SIGINT SIGTERM ERR 0 1
+  trap "_onexit" EXIT SIGINT SIGTERM ERR 1
   :>"$DEPLOYLOGFILE" && chmod 777 "$DEPLOYLOGFILE" # empty and initialize logfile
   [[ ! -d "deployogi.d" ]] && echo "deployogi.d directory not found in $dir, please use init or think things over" && exit 1
   TRIGGERDIR="$(pwd)/deployogi.d" 
@@ -158,6 +198,7 @@ _setcurrentdir(){
 }
 
 _haltdeploy(){
+  _showstack
   DEPLOYHALT=1
   _microlog "something went wrong..halting deployment" 
   cat "$MICROLOGFILE"
@@ -166,10 +207,10 @@ _haltdeploy(){
 
 _deployapp(){
   _deploytrigger "merging latest '$GITBRANCH' on $1" "30-on.merge" || _haltdeploy
-  _merge || _haltdeploy
   _deploytrigger "configuring $1" "40-on.configure" || _haltdeploy
   _deploytrigger "generating docs for $1" "50-on.generatedocs" || _haltdeploy
   _deploytrigger "running tests of $1" "60-on.test" || _haltdeploy
+  return 0
 }
 
 _dbdiff(){
@@ -193,6 +234,7 @@ _deploytrigger(){
     _print "$triggerfile not found :("
   fi
   _microlog "$desc" 
+  return 0
 }
 
 _clonewebapp(){
@@ -215,15 +257,15 @@ _checkconfig(){
 
 _merge(){
   (
-    # update to latest source
+    ### update to latest source
     unset GIT_DIR
     # git reset --hard            # this will create deployment-refusals as soon as somebody does local changes
     # git clean  -d  -fx ""       # this will delete local changes
     git stash                     # instead stash local changes (temporary save to gitstack), no loss of local changes, and no git halts
     git pull origin "$GITBRANCH"  # make sure we have the latest source from our gitrepo ($GITDIR)..note: we dont use pull, since that automatically 
-    # this might also have its benefits : http://longair.net/blog/2009/04/16/git-fetch-and-merge/
-    #git fetch origin              # make sure we have the latest source from our gitrepo ($GITDIR)..note: we dont use pull, since that automatically 
-    #git merge origin "$GITBRANCH" # lets merge the new version on top of our old one
+    ### this might also have its benefits : http://longair.net/blog/2009/04/16/git-fetch-and-merge/
+    # git fetch origin              # make sure we have the latest source from our gitrepo ($GITDIR)..note: we dont use pull, since that automatically 
+    # git merge origin "$GITBRANCH" # lets merge the new version on top of our old one
     
   ) 2>&1 | while read line; do printf "[deployogi]    | git> $line\n"; done
 
@@ -252,6 +294,7 @@ init(){
   cd "$dir"; mkdir deployogi.d && _print "creating '$dir/deployogi.d' dir"
   [[ ! -f "$dir/deployogi" ]] && cp "$0" . && _print "copying 'deployogi'-bashscript to '$dir/.'"
   echo "$TPL_CONFIG" > "$dir/deployogi.d/config" && _print "creating '$dir/deployogi.d/config'" || echo "[!] permission prob!"
+  echo "$TPL_MERGE"  > "$dir/deployogi.d/30-on.merge" && _print "creating '$dir/deployogi.d/30-on.merge'" || echo "[!] permission prob!"
   for trigger in "${TRIGGERS[@]}"; do _print "creating '$dir/deployogi.d/$trigger'" && printf "$TPL_TRIGGER" > "$dir/deployogi.d/$trigger"; done
   [[ ! $? == 0 ]] && echo "[!] wow..permissionproblems..please think things over" && exit 1
   _print "done! \o/"

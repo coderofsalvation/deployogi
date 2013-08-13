@@ -167,9 +167,7 @@ deploy(){
     _checkconfig 
     _setcurrentdir "$PROJECTDIR"
     _deploytrigger "beginning deployment" "10-on.begin" || _haltdeploy
-    _deploytrigger "creating backup of current webapp" "20-on.backup" || _haltdeploy
-    echo " *FIXME backup disabled"
-    #_deploytrigger "creating backup of current webapp" "20-on.backup" _backup || _haltdeploy
+    _deploytrigger "creating backup of current webapp" "20-on.backup" _backup || _haltdeploy
     if [[ $USE_CLONE ]]; then
       _header "clone deployment"
       IS_CLONE=1

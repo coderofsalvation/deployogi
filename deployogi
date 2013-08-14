@@ -314,7 +314,7 @@ help(){
 }
 
 _backup(){
-  _header "backup current version"
+  _header "backup current"
   cd $PROJECTDIR 
   #currenttag="$(git describe --abbrev=0 --tags)"
   if [[ $USE_SQL ]]; then 

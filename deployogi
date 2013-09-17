@@ -180,8 +180,8 @@ deploy(){
       unset IS_CLONE
     fi 
     _microlog "clone went fine..starting real deployment"
-    printf "\n\n$C_YELLOW[!] about to do the real deployment in 10 secs..press ctrl-c to abort$C_RESET\n"
-    for ((i=0; i < 10; i++ )); do printf "."; sleep 1s; done;
+    printf "\n\n$C_YELLOW[!] about to do the real deployment in 3 secs..press ctrl-c to abort$C_RESET\n"
+    for ((i=0; i < 3; i++ )); do printf "."; sleep 1s; done;
     _header "real deployment"
     _setcurrentdir "$PROJECTDIR"
     _deployapp "live version" || _haltdeploy # halt if deployment went wrong 
@@ -199,7 +199,10 @@ _setcurrentdir(){
 _haltdeploy(){
   _showstack
   DEPLOYHALT=1
-  _microlog "something went wrong..halting deployment" 
+  _microlog "something went wrong..halting deployment..removing last push" 
+  cd "$PROJECTDIR"
+  git reset --hard HEAD~1
+  git push -f
   cat "$MICROLOGFILE"
   exit 1
 }

@@ -158,9 +158,9 @@ _microlog(){
 
 #                       <-- starts deployment of webapplication (usually called by git hook)
 deploy(){
+  [[ ! -d "deployogi.d" ]] && echo "'deployogi.d'-directory not found in $dir, please use 'init' cmd or think things over" && exit 1
   trap "_onexit" EXIT SIGINT SIGTERM ERR 1
   :>"$DEPLOYLOGFILE" && chmod 777 "$DEPLOYLOGFILE" # empty and initialize logfile
-  [[ ! -d "deployogi.d" ]] && echo "deployogi.d directory not found in $dir, please use init or think things over" && exit 1
   TRIGGERDIR="$(pwd)/deployogi.d" 
   ( 
     _header "deployogi"; printf "$VERSIONFANCY\n\n"
@@ -177,8 +177,8 @@ deploy(){
       _setcurrentdir "$PROJECTDIR_CLONE"
       _deployapp "clone version" || _haltdeploy # halt if clone deployment went wrong
       if [[ $USE_SQL ]]; then _dbdiff "$PROJECTDIR_CLONE"; fi 
-      unset IS_CLONE
     fi 
+    unset IS_CLONE
     _microlog "clone went fine..starting real deployment"
     printf "\n\n$C_YELLOW[!] about to do the real deployment in 3 secs..press ctrl-c to abort$C_RESET\n"
     for ((i=0; i < 3; i++ )); do printf "."; sleep 1s; done;
@@ -229,6 +229,7 @@ _deploytrigger(){
   [[ -n "$3" ]] && eval $function
   trigger="$TRIGGERDIR/$triggerfile"; 
   printf "$C_GREEN[deployogi] %-40s @ $trigger$C_RESET\n" "$desc"
+  cd "$GITDIR"
   if [[ -f "$trigger" ]]; then 
     cd "$(cat "$CURRENTDIRLOGFILE")"
     source "$trigger" 2>&1 || _haltdeploy # while read line; do printf "[x]    | $line\n"; done || _haltdeploy

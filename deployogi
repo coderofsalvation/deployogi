@@ -49,6 +49,7 @@ USE_SQL=1
 USE_CLONE=1
 IS_CLONE=0
 DEPLOYHALTFILE=""
+DEPLOYOGIDIR="$( [[ $DEPLOYOGIDIR ]] && echo "$DEPLOYOGIDIR" || echo "deployogi.d" )"
 
 # template files (folded in vim for convenience)
 TPL_TRIGGER="#!/bin/bash\n\n# nothing happening here..yet\n\n# [[ \$IS_CLONE ]] && echo '$0 applied on clone!'\n# [[ -f \$DEPLOYHALTFILE ]] && echo 'deployment was halted, handy for on.exit-hook';\n\n\n# return > 0 if something went wrong and deployment should stop\nreturn 0"
@@ -108,7 +109,7 @@ WEBDOMAIN="your.domain.com"                               # domain where the web
 '
   
 # parse config of project if any
-if [[ -f "deployogi.d/config" ]]; then source "deployogi.d/config"; fi; #; else echo "deployogi.d/config file not found" && exit 1; fi;
+if [[ -f "$DEPLOYOGIDIR/config" ]]; then source "$DEPLOYOGIDIR/config"; fi; #; else echo "$DEPLOYOGIDIR/config file not found" && exit 1; fi;
 
 # catch exit 
 TRAPPED=0
@@ -164,10 +165,10 @@ _microlog(){
 
 #                       <-- starts deployment of webapplication (usually called by git hook)
 deploy(){
-  [[ ! -d "deployogi.d" ]] && echo "'deployogi.d'-directory not found in $dir, please use 'init' cmd or think things over" && exit 1
+  [[ ! -d "$DEPLOYOGIDIR" ]] && echo "'$DEPLOYOGIDIR'-directory not found in $dir, please use 'init' cmd or think things over" && exit 1
   trap "_onexit" EXIT SIGINT SIGTERM ERR 1
   :>"$DEPLOYLOGFILE" && chmod 777 "$DEPLOYLOGFILE" # empty and initialize logfile
-  TRIGGERDIR="$(pwd)/deployogi.d" 
+  TRIGGERDIR="$(pwd)/$DEPLOYOGIDIR" 
   ( 
     _header "deployogi"; printf "$VERSIONFANCY\n\n"
     _checkconfig 
@@ -361,6 +362,8 @@ _usage(){
     local me=$(basename $0)
     printf "  $me %-5s %-40s\n" "$cmd" "$info" | grep "#" | sed 's/#//g'
   done; echo "";
+  printf "\nHINT: for branchspecific deployments one can use environment variables:\n"
+  printf "\n  deployogi init .\n  mv deployogi.d deployogi.d.foo\n  DEPLOYOGIDIR=deployogi.d.foo deployogi deploy\n"
 }
 
 test $# -lt 1 && _checkrequirements && _usage && exit 65

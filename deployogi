@@ -29,6 +29,7 @@
 # 
 
 # handy variables
+#DEBUG=1     # <-- uncomment this to see stacktraces
 C_RESET="\E[0m"                         
 C_YELLOW="\E[1;33;40m"
 C_RED="\E[1;31;40m"                     
@@ -47,9 +48,10 @@ REQUIREMENTS=(git)
 USE_SQL=1
 USE_CLONE=1
 IS_CLONE=0
+DEPLOYHALTFILE=""
 
 # template files (folded in vim for convenience)
-TPL_TRIGGER="#!/bin/bash\n\n# nothing happening here..yet\n\n# [[ \$IS_CLONE ]] && echo '$0 applied on clone!'\n# [[ \$DEPLOYHALT ]] && echo 'deployment was halted, handy for on.exit-hook';\n\n\n# return > 0 if something went wrong and deployment should stop\nreturn 0"
+TPL_TRIGGER="#!/bin/bash\n\n# nothing happening here..yet\n\n# [[ \$IS_CLONE ]] && echo '$0 applied on clone!'\n# [[ -f \$DEPLOYHALTFILE ]] && echo 'deployment was halted, handy for on.exit-hook';\n\n\n# return > 0 if something went wrong and deployment should stop\nreturn 0"
 TPL_MERGE='#!/bin/bash
 
 ### NOTES ###
@@ -63,7 +65,8 @@ TPL_MERGE='#!/bin/bash
 #   git reset --hard                       # this will create merge-refusals as soon as somebody does local changes
 #   git clean  -d  -fx ""                  # this will delete local changes
 #
-# [[ \$IS_CLONE ]] && echo "$0 applied on clone!"\n
+# [[ -z \$IS_CLONE ]] && echo "$0 applied on clone!"\n
+# [[ -z \$DEPLOYHALTFILE ]] && echo "previous deployogi hook failed!"\n
 
 ### update to latest source
 
@@ -71,6 +74,7 @@ unset GIT_DIR
 git stash || return 1                    # instead stash local changes (temporary save to gitstack), no loss of local changes, and no git halts
 git pull origin "$GITBRANCH" || return 1 # since we are currently on branch "$GITBRANCH", this will fetch the latest code from shared repo 
                                          # and merge it into the workingtree as well
+git diff HEAD^ HEAD                      # show modifications since last commit                                         
 
 # return > 0 if something went wrong and deployment should stop
 return 0
@@ -107,7 +111,7 @@ WEBDOMAIN="your.domain.com"                               # domain where the web
 if [[ -f "deployogi.d/config" ]]; then source "deployogi.d/config"; fi; #; else echo "deployogi.d/config file not found" && exit 1; fi;
 
 # catch exit 
-trapped=1;
+TRAPPED=0
 
 _print(){
   printf "$C_GREEN[deployogi]$C_RESET $1\n"
@@ -128,19 +132,21 @@ _showstack() {
 }
  
 _onexit(){
-  trap - 1 2 3 15 # clear trap so we are not triggered twice
-  trigger="$TRIGGERDIR/deployogi.d/70-on.exit"
+  [[ $TRAPPED == 1 ]] && return 0
+  TRAPPED=1
+  trap - SIGINT SIGTERM ERR SIGHUP 11 0 1 2 3 15 EXIT # clear trap so we are not triggered twice *FIXME* does not work
+  trap
   if [[ {$#TRIGGERDIR} != 0 ]]; then 
     export MICROLOGFILE;  # lets give the subshells access to these variables
     export DEPLOYLOGFILE; #
     export GITBRANCH;     #
-    [[ $DEPLOYHALT ]] && export DEPLOYHALT; 
-    (
+    export DEPLOYHALT;     #
       cd "$TRIGGERDIR"
-      _deploytrigger "exiting deployment.." "70-on.exit" 
-    ) | while read line; do echo -e "$line"; echo -e "$line" >> "$DEPLOYLOGFILE"; done # tee doesnt support colors and create bufferproblems
+      _deploytrigger "exiting deployment.." "70-on.exit"  | while read line; do 
+        echo -e "$line"; echo -e "$line" >> "$DEPLOYLOGFILE"; 
+      done # tee doesnt support colors and create bufferproblems
   fi 
-  echo "[x] summary: $(cat "$MICROLOGFILE")" >> "$DEPLOYLOGFILE"
+  echo "[x] summary: $(date +%H:%M) $(cat "$MICROLOGFILE")" >> "$DEPLOYLOGFILE"
   return 0
 }
 
@@ -166,6 +172,8 @@ deploy(){
     _header "deployogi"; printf "$VERSIONFANCY\n\n"
     _checkconfig 
     _setcurrentdir "$PROJECTDIR"
+    DEPLOYHALTFILE="tmp/$NAME.deployhalt"
+    [[ -f $DEPLOYHALTFILE ]] && rm "$DEPLOYHALTFILE"
     _deploytrigger "beginning deployment" "10-on.begin" || _haltdeploy
     _deploytrigger "creating backup of current webapp" "20-on.backup" _backup || _haltdeploy
     if [[ $USE_CLONE ]]; then
@@ -197,13 +205,19 @@ _setcurrentdir(){
 }
 
 _haltdeploy(){
-  _showstack
-  DEPLOYHALT=1
-  _microlog "something went wrong..halting deployment..removing last push" 
+  [[ $DEBUG ]] && _showstack
+  msg="something went wrong..halting deployment..removing last push" 
+  echo "[!] $msg"
+  _microlog "$msg";
   cd "$PROJECTDIR"
   git reset --hard HEAD~1
-  git push -f
-  cat "$MICROLOGFILE"
+  # temporary disable hook before pushing
+  PUSHHOOK="$GITDIR/hooks/post-receive"
+  if [[ -f "$PUSHHOOK" ]]; then 
+    mv "$PUSHHOOK" "$PUSHHOOK.bak"
+    git push -f
+    mv "$PUSHHOOK.bak" "$PUSHHOOK"
+  else echo "could not disable $PUSHHOOK in _haltdeploy(), something is really wrong"; fi
   exit 1
 }
 
@@ -212,7 +226,13 @@ _deployapp(){
   _deploytrigger "configuring $1" "40-on.configure" || _haltdeploy
   _deploytrigger "generating docs for $1" "50-on.generatedocs" || _haltdeploy
   _deploytrigger "running tests of $1" "60-on.test" || _haltdeploy
+  _gentimeline
   return 0
+}
+
+_gentimeline(){
+  cd "$PROJECTDIR"
+  git log --oneline --graph --all --decorate >> "$DEPLOYLOGFILE"
 }
 
 _dbdiff(){
@@ -223,21 +243,24 @@ _dbdiff(){
 }
 
 _deploytrigger(){
+  [[ -f $DEPLOYHALTFILE ]] && return 0 # dont continue if previous steps failed
   desc="$1"
   triggerfile="$2"
   function="$3"
+  result=0
   [[ -n "$3" ]] && eval $function
   trigger="$TRIGGERDIR/$triggerfile"; 
   printf "$C_GREEN[deployogi] %-40s @ $trigger$C_RESET\n" "$desc"
   cd "$GITDIR"
   if [[ -f "$trigger" ]]; then 
     cd "$(cat "$CURRENTDIRLOGFILE")"
-    source "$trigger" 2>&1 || _haltdeploy # while read line; do printf "[x]    | $line\n"; done || _haltdeploy
+    source "$trigger" 2>&1 #|| _haltdeploy # while read line; do printf "[x]    | $line\n"; done || _haltdeploy
+    result=$?
   else
     _print "$triggerfile not found :("
   fi
   _microlog "$desc" 
-  return 0
+  return $result
 }
 
 _clonewebapp(){

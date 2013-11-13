@@ -350,7 +350,7 @@ _backup(){
     mysqldump --extended-insert=FALSE -u $SQL_LOGIN -p$SQL_PW $SQL_DB > $PROJECTDIR/$PROJECTSQL 
   fi
   echo "[x] make backup of current website: $BACKUPFILE (please wait)"
-  zip -r $BACKUPFILE . | while read line; do printf "\r[x] $i files"; ((i=i+1)); done; echo ""
+  zip -r $BACKUPFILE . -x *.git* | while read line; do printf "\r[x] $i files"; ((i=i+1)); done; echo ""
   return $?
 }
 

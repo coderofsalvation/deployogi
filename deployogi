@@ -238,7 +238,7 @@ _gentimeline(){
 
 _dbdiff(){
   projectdir="$1"
-  header "database diff"
+  _header "database diff"
   mysqldump --extended-insert=FALSE -u $SQL_LOGIN -p$SQL_PW $SQL_DB > $projectdir/$PROJECTSQL.afterdeploy
   diff -Naur $projectdir/$PROJECTSQL $PROJECTDIR/$PROJECTSQL.afterdeploy | grep -v "AUTO_INCREMENT=" | grep -v -E "($SQL_DIFF_IGNORETABLES)"
 }
@@ -350,7 +350,7 @@ _backup(){
     mysqldump --extended-insert=FALSE -u $SQL_LOGIN -p$SQL_PW $SQL_DB > $PROJECTDIR/$PROJECTSQL 
   fi
   echo "[x] make backup of current website: $BACKUPFILE (please wait)"
-  zip -r $BACKUPFILE . -x *.git* | while read line; do printf "\r[x] $i files"; ((i=i+1)); done; echo ""
+  zip -r $BACKUPFILE . -x *.git* -x *.log* | while read line; do printf "\r[x] $i files"; ((i=i+1)); done; echo ""
   return $?
 }
 

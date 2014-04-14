@@ -176,7 +176,7 @@ deploy(){
     DEPLOYHALTFILE="tmp/$NAME.deployhalt"
     [[ -f $DEPLOYHALTFILE ]] && rm "$DEPLOYHALTFILE"
     _deploytrigger "beginning deployment" "10-on.begin" || _haltdeploy
-    _deploytrigger "creating backup of current webapp" "20-on.backup" _backup || _haltdeploy
+    _deploytrigger "creating backup of current webapp" "20-on.backup" || _haltdeploy
     if [[ $USE_CLONE ]]; then
       _header "clone deployment"
       IS_CLONE=1
@@ -339,19 +339,6 @@ help(){
   clear
   if [ -f "$tempfile" ]; then man "$tempfile"; rm "$tempfile"; fi
   exit 0
-}
-
-_backup(){
-  _header "backup current"
-  cd $PROJECTDIR 
-  #currenttag="$(git describe --abbrev=0 --tags)"
-  if [[ $USE_SQL ]]; then 
-    echo "[x] creating backup of current database $SQL_DB into '$PROJECTDIR/$PROJECTSQL'"
-    mysqldump --extended-insert=FALSE -u $SQL_LOGIN -p$SQL_PW $SQL_DB > $PROJECTDIR/$PROJECTSQL 
-  fi
-  echo "[x] make backup of current website: $BACKUPFILE (please wait)"
-  zip -r $BACKUPFILE . -x *.git* -x *.log* | while read line; do printf "\r[x] $i files"; ((i=i+1)); done; echo ""
-  return $?
 }
 
 _usage(){

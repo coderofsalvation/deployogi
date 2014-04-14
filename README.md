@@ -4,12 +4,20 @@ Deployogi
 =========
 The yoga of autodeployment, in other words: putting a new version of a website in production by simply hitting enter.
 
-Why?
-====
-To move away from handhacking webapplications into production.
-So teams can deploy and upgrade many webapplications in one and the same way.
-The deployment-cycle for many webapplication can be done in many (manual) ways, and therefore can have a 
-counterproductive effect on deadlines and teamproductivity in genereal. 
+Workflow / the philosophy behind this deploymenttool/model
+==========================================================
+Deployogi assumes a push-backup-clone-merge-test and compare-deploymentmodel.
+Read [this article](http://leon.vankammen.eu/blog/automatic-deployment-with-git-and-deployogi-scripts) to learn more about it.
+Here you can see the simplest way of deploying (for more details read article) : 
+
+<img src="https://dl.dropboxusercontent.com/s/88zzcgb4hp9k641/seqdiagram-deployogi-easy.png?dl=1"> 
+
+Why? For who?
+=============
+Well in the first place: to get rid of handhacked deployment, and for people who dont always need PaaS solutions.
+There are many PaaS solutions which take away the pain of handhacked deployment.
+However, there are cases where deployogi does the same.
+Deployogi is an effort to stimulate teams to deploy and upgrade many webapplications in a similar way.
 
 Demonstration
 =============
@@ -100,11 +108,18 @@ Requirements
 * a webapplication which supports cli-invokation (to configure frameworkrelated variables from the commandline)
 * you have to know about of commandline (bash) stuff 
 
-Workflow / the philosophy behind this deploymenttool/model
-==========================================================
-Deployogi assumes a push-backup-clone-merge-test and compare-deploymentmodel.
-Read [this article](http://leon.vankammen.eu/blog/automatic-deployment-with-git-and-deployogi-scripts) to learn more about it.
-Here you can see the simplest way of deploying (for more details read article) : 
+Backups
+=======
+Here is an example '20-on.backup'-hook:
 
-<img src="https://dl.dropboxusercontent.com/s/88zzcgb4hp9k641/seqdiagram-deployogi-easy.png?dl=1"> 
+     cd $PROJECTDIR 
+     if [[ $USE_SQL ]]; then 
+       echo "[x] creating backup of current database $SQL_DB into '$PROJECTDIR/$PROJECTSQL'"
+       mysqldump --extended-insert=FALSE -u $SQL_LOGIN -p$SQL_PW $SQL_DB > $PROJECTDIR/$PROJECTSQL 
+     fi
+     echo "[x] make backup of current website: $BACKUPFILE (please wait)"
+     zip -r $BACKUPFILE . -x *.git* -x *.log* | while read line; do printf "\r[x] $i files"; ((i=i+1)); done; echo ""
+
+This is handy, because in rare cases its faster to rollout the last database/code.     
+Ofcoarse,  on failure deployogi automatically removes the last commit, but this could leave your database crippled.
 

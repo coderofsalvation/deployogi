@@ -67,7 +67,7 @@ TPL_MERGE='#!/bin/bash
 #   git clean  -d  -fx ""                  # this will delete local changes
 #
 # [[ -z \$IS_CLONE ]] && echo "$0 applied on clone!"\n
-# [[ -z \$DEPLOYHALTFILE ]] && echo "previous deployogi hook failed!"\n
+# [[ -z \$DEPLOYHALTFILE ]] && echo "previous deployogi hook failed!"\n
 
 ### update to latest source
 
@@ -278,7 +278,9 @@ _checkconfig(){
   vars=(NAME GITDIR PROJECTDIR BACKUPFILE DEPLOYLOGFILE WEBDOMAIN); for var in "${vars[@]}"; do if [[ ! ${!var} ]]; then echo "configfile has missing variable: $var" && exit 1; fi; done  
   vars=(PROJECTSQL SQL_LOGIN SQL_PW SQL_DB); for var in "${vars[@]}"; do if [[ ! ${!var} ]]; then echo "missing $var, so not using SQL features" && unset USE_SQL;  fi; done
   [[ ! -n "$PROJECTDIR_CLONE" ]] && unset USE_CLONE
-  printf "[deployogi] using SQL: " && [[ $USE_SQL ]] && printf "yes\n" || printf "$C_YELLOW no (see config)$C_RESET\n"
+  printf "[deployogi] using SQL:  " && [[ $USE_SQL ]] && printf "yes\n" || printf "$C_YELLOW no (see config)$C_RESET\n"
+  printf "[deployogi] using USER: $C_YELLOW""$(id)""$C_RESET \n"
+  printf "[deployogi] using PATH: $C_YELLOW""$(echo $PATH)""$C_RESET \n"
   printf "[deployogi] deploying on clone before doing the real thing: " && [[ $USE_CLONE ]] && printf "yes\n" ||  printf "$C_YELLOW no (see config)$C_RESET\n"
 }
 

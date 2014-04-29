@@ -107,6 +107,8 @@ If installed, deployogi automatically logs to (r)syslogd daemon(almost on every 
 You can check the syslog by running 'tail -f /var/log/syslog' or using [lnav](http://lnav.org), or simply
 forward it to a remote syslogd service.
 
+<img src="http://static.squarespace.com/static/51bd4e13e4b0052d7873ad34/t/5337ae40e4b0fb540513b2b0/1396158018387/?format=750w"/>
+
 Requirements
 ============
 

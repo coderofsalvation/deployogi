@@ -101,6 +101,12 @@ My webapplication has no tests!
 No worries, Deployogi works well with [Testosteron](https://github.com/coderofsalvation/testosteron), a modular testingtool which works with all programminglanguages.
 Just write some testosteron tests and call `'./test all white'` in deployogi's 'deployogi.d/60-on.test'-hook.
 
+Syslog
+======
+If installed, deployogi automatically logs to (r)syslogd daemon(almost on every linux system).
+You can check the syslog by running 'tail -f /var/log/syslog' or using [lnav](http://lnav.org), or simply
+forward it to a remote syslogd service.
+
 Requirements
 ============
 

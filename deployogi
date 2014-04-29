@@ -356,7 +356,7 @@ _usage(){
 }
 
 test $# -lt 1 && _checkrequirements && _usage && exit 65
-"$@"
+"$@" | while read line; do echo -e "$line"; [[ -x /usr/bin/logger ]] && logger -p local3.notice -t "deployogi $NAME" -- "$line"; done
 exit 0
 
 # the manual text (folded in vim for convienence)

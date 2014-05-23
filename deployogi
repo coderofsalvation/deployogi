@@ -49,6 +49,7 @@ USE_SQL=1
 USE_CLONE=1
 IS_CLONE=0
 DEPLOYHALTFILE=""
+DBDIFF=0
 DEPLOYOGIDIR="$( [[ $DEPLOYOGIDIR ]] && echo "$DEPLOYOGIDIR" || echo "deployogi.d" )"
 
 # template files (folded in vim for convenience)
@@ -237,6 +238,7 @@ _gentimeline(){
 }
 
 _dbdiff(){
+  [[ $DBDIFF == 0 ]] && { echo "diffing of database disabled (set DBDIFF=1 to enable)"; return 0; }                                         
   projectdir="$1"
   _header "database diff"
   mysqldump --extended-insert=FALSE -u $SQL_LOGIN -p$SQL_PW $SQL_DB > $projectdir/$PROJECTSQL.afterdeploy

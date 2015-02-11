@@ -43,7 +43,7 @@ UNIQUE="$(date +"%Y%m%d%H%M")"
 CURRENTDIRLOGFILE="/tmp/deployogi.$UNIQUE.currentdir"
 MICROLOGFILE="/tmp/deployogi.$UNIQUE.log"; :>"$MICROLOGFILE" # initialize logfile
 DEPLOY_LOG="deploystart"
-TRIGGERS=(10-on.begin 20-on.backup 40-on.configure 50-on.generatedocs 60-on.test 70-on.exit )
+TRIGGERS=(10-on.begin 20-on.backup 40-on.configure 50-on.test 60-on.generatedocs 70-on.exit )
 REQUIREMENTS=(git)
 USE_SQL=1
 USE_CLONE=1
@@ -226,8 +226,8 @@ _haltdeploy(){
 _deployapp(){
   _deploytrigger "merging latest '$GITBRANCH' on $1" "30-on.merge" || _haltdeploy
   _deploytrigger "configuring $1" "40-on.configure" || _haltdeploy
-  _deploytrigger "generating docs for $1" "50-on.generatedocs" || _haltdeploy
-  _deploytrigger "running tests of $1" "60-on.test" || _haltdeploy
+  _deploytrigger "running tests of $1" "50-on.test" || _haltdeploy
+  _deploytrigger "generating docs for $1" "60-on.generatedocs" || _haltdeploy
   _gentimeline
   return 0
 }
@@ -323,7 +323,7 @@ init(){
   dir="$1"
   [[ ! -d "$dir" ]] && echo "[!] directory '$dir' does not exist, please think things over" && exit 1
   cd "$dir"; mkdir deployogi.d && _print "creating '$dir/deployogi.d' dir"
-  [[ ! -f "$dir/deployogi" ]] && cp "$0" . && _print "copying 'deployogi'-bashscript to '$dir/.'"
+  [[ ! -f "$dir/deployogi" ]] && cp "$REALPATH/deployogi" . && _print "copying 'deployogi'-bashscript to '$dir/.'"
   echo "$TPL_CONFIG" > "$dir/deployogi.d/config" && _print "creating '$dir/deployogi.d/config'" || echo "[!] permission prob!"
   echo "$TPL_MERGE"  > "$dir/deployogi.d/30-on.merge" && _print "creating '$dir/deployogi.d/30-on.merge'" || echo "[!] permission prob!"
   for trigger in "${TRIGGERS[@]}"; do _print "creating '$dir/deployogi.d/$trigger'" && printf "$TPL_TRIGGER" > "$dir/deployogi.d/$trigger"; done
